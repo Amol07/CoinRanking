@@ -9,37 +9,38 @@ import Foundation
 
 /// A protocol that defines the methods for fetching coin lists.
 ///
-/// `CoinListServiceProvider` is a protocol that provides the structure for any service class that fetches coin list.
-/// It abstracts the process of making a network request and processing the returned data into a usable response.
-/// Classes that conform to this protocol should implement the `fetchCoinList` method to retrieve coin list.
+/// The `CoinListServiceProvider` protocol outlines the structure for any service class that fetches a list of coins.
+/// Conforming classes should implement the `fetchCoinList` method to handle the fetching of coin list data from the network
+/// and processing it into a usable response model.
 ///
 /// - Method:
-///   - `fetchCoinList(request:)`: Fetches coin list asynchronously, takes a `RequestProvider` to generate the network request,
-///     and returns the processed response as a `CoinListResponse`.
+///   - `fetchCoinList(request:)`: This method fetches the coin list asynchronously, generates a network request using
+///     a `RequestProvider`, and returns the processed response as a `CoinListResponse`.
 protocol CoinListServiceProvider {
-	/// Fetches coin list based on the provided request.
+	/// Fetches the coin list based on the provided request.
 	///
-	/// This method creates the network request, fetches raw data from the network, and processes it into a
-	/// `CoinListResponse` object. If the request or processing fails, an error is thrown.
+	/// This method constructs the network request, fetches raw data from the network, and processes it into a `CoinListResponse` model.
+	/// If the request creation, data fetching, or processing fails, it throws an error.
 	///
-	/// - Parameter request: A `RequestProvider` object used to generate the network request.
-	/// - Returns: A `CoinListResponse` object representing the processed coin list data.
-	/// - Throws: An error if the request creation, data fetching, or processing fails.
+	/// - Parameter request: A `RequestProvider` used to generate the network request.
+	/// - Returns: A `CoinListResponse` object containing the processed coin list data.
+	/// - Throws: An error if there is an issue in creating the request, fetching data, or processing the response.
 	func fetchCoinList(request: RequestProvider) async throws -> CoinListResponse
 }
 
-/// A concrete implementation of `CoinListServiceProvider` that fetches coin list and processes them.
+/// A concrete implementation of `CoinListServiceProvider` that fetches and processes the coin list data.
 ///
-/// `CoinListService` is responsible for orchestrating the fetching and processing of coin list. It combines a `NetworkProvider`
-/// to fetch raw data from the network, and a `CoinListProcessor` to process the raw data into a `CoinListResponse` model.
+/// The `CoinListService` class is responsible for orchestrating the fetching and processing of the coin list data.
+/// It leverages a `NetworkProvider` to retrieve the raw data from the network and a `CoinListProcessor` to process this data into
+/// a structured `CoinListResponse` model.
 ///
 /// - Properties:
-///   - `networkManager`: A `NetworkProvider` instance responsible for fetching raw data from the network.
-///   - `processor`: A `CoinListProcessor` instance responsible for processing raw data into the `CoinListResponse`.
+///   - `networkManager`: A `NetworkProvider` instance that is responsible for performing network requests and fetching raw data.
+///   - `processor`: A `CoinListProcessor` instance that processes the raw data into a `CoinListResponse` model.
 ///
 /// - Initialization:
-///   - `init(networkManager:processor:)`: Initializes a new instance of `CoinListService` with the provided `NetworkProvider`
-///     and an optional `CoinListProcessor` (defaults to a new instance of `CoinListProcessor`).
+///   - `init(networkManager:processor:)`: Initializes the `CoinListService` with a given `NetworkProvider` and an optional `CoinListProcessor`.
+///     If no processor is provided, a default instance of `CoinListProcessor` is used.
 class CoinListService: CoinListServiceProvider {
 
 	// MARK: - Properties
@@ -47,11 +48,14 @@ class CoinListService: CoinListServiceProvider {
 	private let processor: CoinListProcessor
 
 	// MARK: - Initialization
+
 	/// Initializes a new instance of `CoinListService` with the provided `NetworkProvider` and an optional `CoinListProcessor`.
 	///
+	/// The `networkManager` is responsible for fetching the raw data, and the `processor` processes the data into a usable `CoinListResponse`.
+	///
 	/// - Parameters:
-	///   - networkManager: A `NetworkProvider` responsible for fetching raw data.
-	///   - processor: A `CoinListProcessor` for processing the raw data into `CoinListResponse` (defaults to a new instance).
+	///   - networkManager: A `NetworkProvider` that fetches raw data from the network. Defaults to a new instance of `NetworkManager`.
+	///   - processor: A `CoinListProcessor` used to process the raw data into a `CoinListResponse` model. Defaults to a new instance of `CoinListProcessor`.
 	init(networkManager: NetworkProvider = NetworkManager(),
 		 processor: CoinListProcessor = CoinListProcessor()) {
 		self.networkManager = networkManager
@@ -59,14 +63,17 @@ class CoinListService: CoinListServiceProvider {
 	}
 
 	// MARK: - Methods
-	/// Fetches coin list based on the provided request.
+
+	/// Fetches the coin list based on the provided request.
 	///
-	/// This method calls the `networkManager` to fetch the raw data for the coin list and passes that data to the
-	/// `processor` to convert it into a `CoinListResponse` model.
+	/// This method uses the provided `RequestProvider` to create a network request, fetches raw data from the network using the
+	/// `networkManager`, and processes the data into a `CoinListResponse` using the `processor`.
 	///
-	/// - Parameter request: A `RequestProvider` that creates a `URLRequest` for the network call.
-	/// - Returns: A `CoinListResponse` object that represents the processed coin list data.
-	/// - Throws: An error if the network request fails, or if there is an issue in processing the data.
+	/// If any part of the process (network request, data fetching, or data processing) fails, an error is thrown.
+	///
+	/// - Parameter request: A `RequestProvider` that creates a `URLRequest` to be used for the network call.
+	/// - Returns: A `CoinListResponse` object containing the processed data.
+	/// - Throws: An error if the network request fails, or if there is an issue during data processing.
 	func fetchCoinList(request: RequestProvider) async throws -> CoinListResponse {
 		// Create the network request using the provided request provider
 		let request = try request.createRequest()

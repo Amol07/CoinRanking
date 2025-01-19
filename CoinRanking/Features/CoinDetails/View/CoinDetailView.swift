@@ -24,14 +24,20 @@ struct CoinDetailView: View {
 						ProgressView("Loading...")
 					case let .loaded(coin):
 						HeaderSection(coin: coin)
-						PerformanceChartSection(viewModel: viewModel)
 						StatisticsSection(coin: coin)
 						AboutSection(coin: coin)
 						SupplySection(coin: coin)
+						if let _ = viewModel.history {
+							PerformanceChartSection(viewModel: viewModel)
+						}
 					case .empty:
-						EmptyView()
+						Text("No Results Found!!!")
+							.foregroundColor(.gray)
+							.padding()
 					case .error:
-						EmptyView()
+						Text("Something went wrong. Please try again later!!!")
+							.foregroundColor(.red)
+							.padding()
 				}
             }
             .padding(16)
@@ -39,6 +45,7 @@ struct CoinDetailView: View {
         .navigationTitle("Coin Details")
 		.task {
 			await viewModel.fetchCoinDetails(timePeriod: "24h")
+			await viewModel.fetchPriceHistory(timePeriod: "24h")
 		}
     }
 }
@@ -63,43 +70,61 @@ struct HeaderSection: View {
             Spacer()
 
             VStack(alignment: .leading) {
-				Text("Price: $\(coin.formattedPrice)")
+				Text(coin.formattedPrice)
                     .font(.title2)
-                Text("Change: \(coin.change) %")
-                    .foregroundColor(coin.change.starts(with: "-") ? .red : .green)
+				Text(coin.changeText)
+					.foregroundColor(coin.isNegativeChange ? .red : .green)
             }
         }
     }
 }
 
-// MARK: - PerformanceChartSection
 struct PerformanceChartSection: View {
 	@ObservedObject var viewModel: CoinDetailViewModel
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 16) {
+			// Title
 			Text("Performance")
 				.font(.headline)
 
+			// Segment Picker
 			Picker("Filter", selection: $viewModel.selectedChartFilter) {
 				ForEach(ChartFilter.allCases) { filter in
 					Text(filter.rawValue).tag(filter)
 				}
 			}
-			.pickerStyle(SegmentedPickerStyle())
+			.pickerStyle(.segmented)
+			.onChange(of: viewModel.selectedChartFilter) { oldValue, newValue in
+				Task {
+					await viewModel.fetchPriceHistory(timePeriod: newValue.rawValue)
+				}
+			}
 
 			Chart {
-				ForEach(viewModel.getFilteredChartData().indices, id: \.self) { index in
+				ForEach(viewModel.history ?? []) { data in
 					LineMark(
-						x: .value("Time", index),
-						y: .value("Price", viewModel.getFilteredChartData()[index])
+						x: .value("Time", data.formattedDate),
+						y: .value("Price", (Double(data.price ?? "0") ?? 0.0) / 1000)
 					)
 				}
 			}
-			.chartYAxis {
-				AxisMarks(position: .leading)
+			.chartXAxis {
+				AxisMarks(position: .bottom) { value in
+					AxisValueLabel(format: .dateTime)
+				}
 			}
-			.frame(height: 200)
+			.chartYAxis {
+				AxisMarks(position: .leading) { value in
+					AxisValueLabel {
+						if let doubleValue = value.as(Double.self) {
+							Text("\(String(format: "$ %.1fK", doubleValue))") // Custom formatting
+						}
+					}
+					AxisGridLine()
+				}
+			}
+			.frame(height: 300)
 		}
 	}
 }
@@ -114,11 +139,11 @@ struct StatisticsSection: View {
                 .font(.headline)
 
             HStack {
-				StatCard(title: "Market Cap", value: "$\(coin.formattedMarketCap)")
-				StatCard(title: "24H Volume", value: "$\(coin.formatted24HourVolume)")
+				StatCard(title: "Market Cap", value: "\(coin.formattedMarketCap)")
+				StatCard(title: "24H Volume", value: "\(coin.formatted24HourVolume)")
             }
             HStack {
-				StatCard(title: "All-Time High", value: "$\(coin.formattedAllTimeHigh)")
+				StatCard(title: "All-Time High", value: "\(coin.formattedAllTimeHigh)")
                 StatCard(title: "Rank", value: "#\(coin.rank)")
             }
         }

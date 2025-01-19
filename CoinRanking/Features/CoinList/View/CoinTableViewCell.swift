@@ -12,36 +12,81 @@ class CoinTableViewCell: UITableViewCell {
 
     private let thumbnailImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 8
+        imageView.contentMode = .scaleAspectFit
+        imageView.layer.cornerRadius = 30
         imageView.clipsToBounds = true
-        imageView.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 60).isActive = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
 
-    private let nameLabel: UILabel = {
+    private lazy var nameLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.textColor = .gray
+        label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private lazy var symbolLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private lazy var percentChangeLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.textColor = .systemGray
+        label.textAlignment = .right
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private lazy var priceLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 16)
+        label.textAlignment = .right
+        label.setContentHuggingPriority(.required, for: .horizontal)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
-    private let priceLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .systemGray
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private lazy var symbolAndPriceContainerView: UIView = {
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.backgroundColor = .clear
+        containerView.addSubview(symbolLabel)
+        containerView.addSubview(priceLabel)
+        NSLayoutConstraint.activate([
+            symbolLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
+            priceLabel.leadingAnchor.constraint(greaterThanOrEqualTo: symbolLabel.trailingAnchor, constant: 10),
+            priceLabel.topAnchor.constraint(equalTo: containerView.topAnchor),
+            symbolLabel.centerYAnchor.constraint(equalTo: priceLabel.centerYAnchor),
+            priceLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            priceLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
+        return containerView
     }()
 
-    private let symbolLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .systemGray
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private lazy var nameAndChangeContainerView: UIView = {
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.backgroundColor = .clear
+        containerView.addSubview(nameLabel)
+        containerView.addSubview(percentChangeLabel)
+        NSLayoutConstraint.activate([
+            nameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
+            percentChangeLabel.leadingAnchor.constraint(greaterThanOrEqualTo: nameLabel.trailingAnchor, constant: 10),
+            percentChangeLabel.topAnchor.constraint(equalTo: containerView.topAnchor),
+            nameLabel.centerYAnchor.constraint(equalTo: percentChangeLabel.centerYAnchor),
+            percentChangeLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            percentChangeLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
+        return containerView
     }()
 
     private let horizontalStackView: UIStackView = {
@@ -54,11 +99,13 @@ class CoinTableViewCell: UITableViewCell {
         return hStackView
     }()
 
-    private let verticalStackView: UIStackView = {
+    private lazy var verticalStackView: UIStackView = {
         let vStackView = UIStackView()
         vStackView.axis = .vertical
         vStackView.spacing = 8
         vStackView.translatesAutoresizingMaskIntoConstraints = false
+        vStackView.addArrangedSubview(symbolAndPriceContainerView)
+        vStackView.addArrangedSubview(nameAndChangeContainerView)
         return vStackView
     }()
 
@@ -72,10 +119,12 @@ class CoinTableViewCell: UITableViewCell {
     }
 
     func configure(with coin: Coin) {
-        nameLabel.text = coin.name
-        priceLabel.text = coin.btcPrice
         symbolLabel.text = coin.symbol
-        symbolLabel.setTextColor(hex: coin.color)
+        nameLabel.text = coin.name
+        priceLabel.text = CurrencyFormatter.formattedValue(coin.price)
+        let changeIsPositive = !((coin.change ?? "0.0").starts(with: "-"))
+        percentChangeLabel.text = "\(changeIsPositive ? "▲" : "▼") \(coin.change ?? "0.0") %"
+        percentChangeLabel.textColor = changeIsPositive ? .green : .red
 
         Task { @MainActor in
             thumbnailImageView.image = await loadImage(from: coin.iconURL)
@@ -96,20 +145,24 @@ class CoinTableViewCell: UITableViewCell {
     private func setupView() {
         self.selectionStyle = .none
 
-        verticalStackView.addArrangedSubview(self.nameLabel)
-        verticalStackView.addArrangedSubview(self.symbolLabel)
-        verticalStackView.addArrangedSubview(self.priceLabel)
+//        nameAndSymbolStackView.addArrangedSubview(self.symbolLabel)
+//        nameAndSymbolStackView.addArrangedSubview(self.nameLabel)
+//
+//        priceAndChangeStackView.addArrangedSubview(self.priceLabel)
+//        priceAndChangeStackView.addArrangedSubview(self.percentChangeLabel)
 
         horizontalStackView.addArrangedSubview(self.thumbnailImageView)
-        horizontalStackView.addArrangedSubview(verticalStackView)
+        horizontalStackView.addArrangedSubview(self.verticalStackView)
+//        horizontalStackView.addArrangedSubview(self.nameAndSymbolStackView)
+//        horizontalStackView.addArrangedSubview(self.priceAndChangeStackView)
 
         contentView.addSubview(horizontalStackView)
 
         NSLayoutConstraint.activate([
-            horizontalStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            horizontalStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            horizontalStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            horizontalStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
+            horizontalStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            horizontalStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            horizontalStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            horizontalStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
 }

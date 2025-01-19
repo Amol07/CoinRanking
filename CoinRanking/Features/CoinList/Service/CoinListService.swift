@@ -71,7 +71,6 @@ class CoinListService: CoinListServiceProvider {
         // Create the network request using the provided request provider
         let request = try request.createRequest()
 
-        /*
          // Fetch raw data from the network
          let rawData = try await networkManager.fetchData(for: request)
 
@@ -80,20 +79,5 @@ class CoinListService: CoinListServiceProvider {
 
          // Return the processed response
          return coinListResponse
-         */
-
-        try await Task.sleep(nanoseconds: 1_000_000_000)
-        guard let fileURL = Bundle.main.url(forResource: "Coins", withExtension: "json") else {
-            fatalError("Couldn't find Coins.json in main bundle.")
-        }
-
-        let data: Data
-        do {
-            data = try Data(contentsOf: fileURL)
-            let decoder = JSONDecoder()
-            return try decoder.decode(CoinListResponse.self, from: data)
-        } catch {
-            fatalError("Couldn't load Coins.json from main bundle:\n\(error)")
-        }
     }
 }

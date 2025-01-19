@@ -16,6 +16,8 @@ class FilterViewController: UIViewController {
     init(viewModel: FilterViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        self.selectedFilter = viewModel.selectedFilter
+        self.selectedOrder = viewModel.selectedOrder
     }
 
     required init?(coder: NSCoder) {

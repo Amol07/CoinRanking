@@ -74,16 +74,16 @@ extension CoinListViewController: UITableViewDataSource {
 extension CoinListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let isMarkedAsFavorite = self.viewModel.isFavourite(indexPath.row)
-        let title = isMarkedAsFavorite ? "Unfavorite" : "Favorite"
-        let backgroundColor: UIColor = isMarkedAsFavorite ? .systemRed : .systemBlue
-        let favoriteAction = UIContextualAction(style: .normal, title: title) { _, _, completionHandler in
+        let imageName = isMarkedAsFavorite ? "star.fill" : "star"
+        let favoriteAction = UIContextualAction(style: .normal, title: nil) { _, _, completionHandler in
             self.viewModel.toggleFavorite(at: indexPath.row)
             completionHandler(true)
         }
-        favoriteAction.backgroundColor = backgroundColor
+        favoriteAction.backgroundColor = .systemBlue
+        favoriteAction.image = UIImage(systemName: imageName)
 
         let configuration = UISwipeActionsConfiguration(actions: [favoriteAction])
-        configuration.performsFirstActionWithFullSwipe = false
+        configuration.performsFirstActionWithFullSwipe = true
         return configuration
     }
 }

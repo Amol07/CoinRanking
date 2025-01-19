@@ -9,7 +9,7 @@ import Foundation
 
 class CoinListViewModel {
 
-    private var currentPage: Int = 0
+    private var currentPageOffset: Int = 0
     private let service: CoinListServiceProvider
     var timePeriod: TimePeriod = .oneDay
 
@@ -30,7 +30,7 @@ class CoinListViewModel {
         let response = try await self.service.fetchCoinList(request: request)
         isFetching = false
         coins.append(contentsOf: response.data.coins)
-        currentPage += 1
+        currentPageOffset += 1
     }
 
     func fetchMoreCoins() async throws {
@@ -46,7 +46,7 @@ class CoinListViewModel {
     }
 
     var offSet: Int {
-        return currentPage * 20
+        return currentPageOffset * limit
     }
 
     var limit: Int { 20 }

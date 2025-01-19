@@ -67,17 +67,33 @@ class CoinListService: CoinListServiceProvider {
 	/// - Parameter request: A `RequestProvider` that creates a `URLRequest` for the network call.
 	/// - Returns: A `CoinListResponse` object that represents the processed coin list data.
 	/// - Throws: An error if the network request fails, or if there is an issue in processing the data.
-	func fetchCoinList(request: RequestProvider) async throws -> CoinListResponse {
-		// Create the network request using the provided request provider
-		let request = try request.createRequest()
+    func fetchCoinList(request: RequestProvider) async throws -> CoinListResponse {
+        // Create the network request using the provided request provider
+        let request = try request.createRequest()
 
-		// Fetch raw data from the network
-		let rawData = try await networkManager.fetchData(for: request)
+        /*
+         // Fetch raw data from the network
+         let rawData = try await networkManager.fetchData(for: request)
 
-		// Process the raw data into a `CoinListResponse` model
-		let coinListResponse = try processor.processData(rawData)
+         // Process the raw data into a `CoinListResponse` model
+         let coinListResponse = try processor.processData(rawData)
 
-		// Return the processed response
-		return coinListResponse
-	}
+         // Return the processed response
+         return coinListResponse
+         */
+
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        guard let fileURL = Bundle.main.url(forResource: "Coins", withExtension: "json") else {
+            fatalError("Couldn't find Coins.json in main bundle.")
+        }
+
+        let data: Data
+        do {
+            data = try Data(contentsOf: fileURL)
+            let decoder = JSONDecoder()
+            return try decoder.decode(CoinListResponse.self, from: data)
+        } catch {
+            fatalError("Couldn't load Coins.json from main bundle:\n\(error)")
+        }
+    }
 }

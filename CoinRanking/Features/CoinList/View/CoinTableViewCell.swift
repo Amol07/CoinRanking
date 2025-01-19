@@ -145,24 +145,16 @@ class CoinTableViewCell: UITableViewCell {
     private func setupView() {
         self.selectionStyle = .none
 
-//        nameAndSymbolStackView.addArrangedSubview(self.symbolLabel)
-//        nameAndSymbolStackView.addArrangedSubview(self.nameLabel)
-//
-//        priceAndChangeStackView.addArrangedSubview(self.priceLabel)
-//        priceAndChangeStackView.addArrangedSubview(self.percentChangeLabel)
-
         horizontalStackView.addArrangedSubview(self.thumbnailImageView)
         horizontalStackView.addArrangedSubview(self.verticalStackView)
-//        horizontalStackView.addArrangedSubview(self.nameAndSymbolStackView)
-//        horizontalStackView.addArrangedSubview(self.priceAndChangeStackView)
 
         contentView.addSubview(horizontalStackView)
 
         NSLayoutConstraint.activate([
-            horizontalStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            horizontalStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             horizontalStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             horizontalStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            horizontalStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
+            horizontalStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
         ])
     }
 }

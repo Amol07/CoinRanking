@@ -11,8 +11,8 @@ enum CoinRequest {
 	case coinList(offset: Int,
 				  limit: Int,
 				  timePeriod: String,
-				  orderBy: String,
-				  orderDirection: String)
+				  orderBy: String?,
+				  orderDirection: String?)
 
 	case coinDetails(uuid: String,
 					 timePeriod: String)
@@ -30,18 +30,24 @@ extension CoinRequest: RequestProvider {
 
 	var method: HTTPMethod { .GET }
 
-	var queryParams: [String : String]? {
+	var queryParams: [String: String]? {
 		switch self {
 		case let .coinList(offset, limit, timePeriod, orderBy, orderDirection):
-			[
+            var params: [String: String] = [
 				"offset": "\(offset)",
 				"limit": "\(limit)",
-				"timePeriod": timePeriod,
-				"orderBy": orderBy,
-				"orderDirection": orderDirection
+				"timePeriod": timePeriod
 			]
+            if let orderBy {
+                params["orderBy"] = orderBy
+            }
+            if let orderDirection {
+                params["orderDirection"] = orderDirection
+            }
+            return params
+
 		case let .coinDetails(_, timePeriod):
-			[
+			return [
 				"timePeriod": timePeriod,
 			]
 		}

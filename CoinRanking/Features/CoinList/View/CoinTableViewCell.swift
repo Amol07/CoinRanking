@@ -18,6 +18,7 @@ class CoinTableViewCell: UITableViewCell {
         imageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 60).isActive = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(systemName: "dollarsign.circle.fill")
         return imageView
     }()
 
@@ -132,13 +133,13 @@ class CoinTableViewCell: UITableViewCell {
     }
 
     private func loadImage(from urlString: String) async -> UIImage? {
-        guard let url = URL(string: urlString) else { return nil }
+        guard let url = URL(string: urlString) else { return UIImage(systemName: "dollarsign.circle.fill") }
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             return UIImage(data: data)
         } catch {
             print("Failed to load image: \(error)")
-            return nil
+            return UIImage(systemName: "dollarsign.circle.fill")
         }
     }
 

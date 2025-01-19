@@ -5,13 +5,17 @@
 //  Created by Abhishek Kumar on 19/01/25.
 //
 
+import Combine
 import Foundation
 
 class CoinListViewModel {
 
     private var currentPageOffset: Int = 0
+    private var subscribers: Set<AnyCancellable> = []
     private let service: CoinListServiceProvider
     var timePeriod: TimePeriod = .oneDay
+
+    let filterViewModel = FilterViewModel()
 
     private var favoriteIndices: Set<Int> = []
 
@@ -20,29 +24,49 @@ class CoinListViewModel {
 
     init(_ service: CoinListServiceProvider = CoinListService()) {
         self.service = service
+        self.bindFilterViewModel()
     }
 
-    func fetchCoins() async throws {
+    func fetchCoins() async {
         guard !isFetching else { return }
         isFetching = true
 
         let request = self.coinFetchRequest()
-        let response = try await self.service.fetchCoinList(request: request)
-        isFetching = false
-        coins.append(contentsOf: response.data.coins)
-        currentPageOffset += 1
+        do {
+            let response = try await self.service.fetchCoinList(request: request)
+            isFetching = false
+            coins.append(contentsOf: response.data.coins)
+            currentPageOffset += 1
+        } catch {
+            if currentPageOffset == 0 {
+                self.coins = []
+            }
+        }
     }
 
-    func fetchMoreCoins() async throws {
-        try await fetchCoins()
+    func bindFilterViewModel() {
+        self.filterViewModel.applyFilterPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                self.currentPageOffset = 0
+                self.coins = []
+                Task {
+                    await self.fetchCoins()
+                }
+            }
+            .store(in: &subscribers)
+    }
+
+    func fetchMoreCoins() async {
+        await fetchCoins()
     }
 
     func coinFetchRequest() -> CoinRequest {
         return CoinRequest.coinList(offset: offSet,
                                     limit: limit,
                                     timePeriod: self.timePeriod.rawValue,
-                                    orderBy: "price",
-                                    orderDirection: "desc")
+                                    orderBy: self.filterViewModel.selectedFilter?.rawValue,
+                                    orderDirection: self.filterViewModel.selectedOrder?.rawValue)
     }
 
     var offSet: Int {

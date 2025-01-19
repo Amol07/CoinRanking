@@ -23,19 +23,52 @@ class CoinListViewController: UIViewController {
         return tableView
     }()
 
+    private lazy var loader: UIActivityIndicatorView = {
+        let loader = UIActivityIndicatorView(style: .large)
+        loader.translatesAutoresizingMaskIntoConstraints = false
+        loader.hidesWhenStopped = true
+        return loader
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Top 100 Coins"
+        self.setupNavigationBar()
         self.setupTableView()
+        self.setupLoader()
         self.bindViewModel()
         Task {
-            try? await self.viewModel.fetchCoins()
+            await self.viewModel.fetchCoins()
         }
     }
 }
 
 private extension CoinListViewController {
-    private func setupTableView() {
+
+    func setupNavigationBar() {
+        let filterButton = UIBarButtonItem(title: "Filter",
+                                           style: .plain,
+                                           target: self,
+                                           action: #selector(didTapFilterButton))
+        navigationItem.rightBarButtonItem = filterButton
+    }
+
+    func setupLoader() {
+        view.addSubview(loader)
+        NSLayoutConstraint.activate([
+            loader.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loader.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+
+    @objc
+    func didTapFilterButton() {
+        let filterViewController = FilterViewController(viewModel: viewModel.filterViewModel)
+        filterViewController.modalPresentationStyle = .overCurrentContext
+        present(filterViewController, animated: true, completion: nil)
+    }
+
+    func setupTableView() {
         view.addSubview(self.tableView)
 
         NSLayoutConstraint.activate([
@@ -46,13 +79,22 @@ private extension CoinListViewController {
         ])
     }
 
-    private func bindViewModel() {
+    func bindViewModel() {
         viewModel.$coins
             .receive(on: DispatchQueue.main)
             .sink { _ in
                 self.tableView.reloadData()
             }
             .store(in: &self.subscribers)
+
+        viewModel.$isFetching
+            .receive(on: DispatchQueue.main)
+            .sink { isFetching in
+                if isFetching, self.viewModel.coins.isEmpty {
+                    self.loader.startAnimating()
+                } else { self.loader.stopAnimating()}
+            }
+            .store(in: &subscribers)
     }
 }
 
@@ -92,12 +134,8 @@ extension CoinListViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         if indexPaths.contains(where: { $0.row >= viewModel.coins.count - 5 }) {
             Task {
-                do {
-                    try await viewModel.fetchMoreCoins()
-                    tableView.reloadData()
-                } catch {
-                    print("Failed to fetch more coins: \(error)")
-                }
+                await viewModel.fetchMoreCoins()
+                tableView.reloadData()
             }
         }
     }

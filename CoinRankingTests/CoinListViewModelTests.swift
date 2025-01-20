@@ -2,7 +2,7 @@
 //  CoinListViewModelTests.swift
 //  CoinRanking
 //
-//  Created by Abhishek Kumar on 20/01/25.
+//  Created by Amol Prakash on 20/01/25.
 //
 
 

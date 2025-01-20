@@ -2,7 +2,7 @@
 //  TimePeriod.swift
 //  CoinRanking
 //
-//  Created by Abhishek Kumar on 19/01/25.
+//  Created by Amol Prakash on 19/01/25.
 //
 
 /// An enumeration representing various time periods.

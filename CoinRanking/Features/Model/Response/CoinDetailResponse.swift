@@ -5,6 +5,8 @@
 //  Created by Amol Prakash on 19/01/25.
 //
 
+import Foundation
+
 // MARK: - CoinDetailResponse
 struct CoinDetailResponse: Codable {
     let status: String
@@ -72,4 +74,16 @@ struct Supply: Codable {
     let confirmed: Bool
     let supplyAt: Int
     let circulating, total, max: String
+}
+
+extension CoinDetailResponse {
+    static var mockData: Self {
+        guard let fileURL = Bundle.main.url(forResource: "CoinDetails", withExtension: "json"),
+              let data = try? Data(contentsOf: fileURL) else {
+            fatalError("Couldn't find Coins.json in main bundle.")
+        }
+
+        let decoder = JSONDecoder()
+        return try! decoder.decode(CoinDetailResponse.self, from: data)
+    }
 }

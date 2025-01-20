@@ -93,7 +93,7 @@ class CoinDetailViewModel: ObservableObject {
 						   service: CoinPriceHistoryServiceProvider = CoinPriceHistoryService()) async {
 		do {
 			let request = CoinRequest.coinPriceHistory(uuid: coinID, timePeriod: timePeriod)
-			let response = try await service.fetchCointPriceHistory(request: request)
+			let response = try await service.fetchCoinPriceHistory(request: request)
 			self.history = response.data.history.filter { $0.price != nil }.reversed()
 		} catch {
 			// Handle errors and set history to nil
@@ -119,9 +119,6 @@ enum ChartFilter: String, CaseIterable, Identifiable {
 	case thirtyDays = "30d"
 	case threeMonths = "3m"
 	case oneYear = "1y"
-//	case threeYears = "3y"
-//	case fiveYears = "5y"
-//	case all = "all"
 
 	var id: String { self.rawValue }
 }

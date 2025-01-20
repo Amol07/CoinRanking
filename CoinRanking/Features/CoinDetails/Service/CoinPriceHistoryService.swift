@@ -9,31 +9,31 @@ import Foundation
 
 /// A protocol defining the method for fetching coin price history details.
 ///
-/// Classes conforming to this protocol must implement the `fetchCointPriceHistory` method to fetch
+/// Classes conforming to this protocol must implement the `fetchCoinPriceHistory` method to fetch
 /// and process coin price history data asynchronously.
 ///
 /// - Method:
-///   - `fetchCointPriceHistory(request:)`: Fetches and processes coin price history data based on the provided request.
+///   - `fetchCoinPriceHistory(request:)`: Fetches and processes coin price history data based on the provided request.
 protocol CoinPriceHistoryServiceProvider {
 	/// Fetches and processes coin price history data based on the provided request.
 	///
-	/// This method makes a network request, fetches the raw data, and processes it into a `CoinPriceHistroyResponse` object.
+	/// This method makes a network request, fetches the raw data, and processes it into a `CoinPriceHistoryResponse` object.
 	/// If any step fails, an error is thrown.
 	///
 	/// - Parameter request: The `RequestProvider` used to generate the network request.
-	/// - Returns: A `CoinPriceHistroyResponse` containing the processed data.
+	/// - Returns: A `CoinPriceHistoryResponse` containing the processed data.
 	/// - Throws: An error if the request creation, data fetching, or processing fails.
-	func fetchCointPriceHistory(request: RequestProvider) async throws -> CoinPriceHistroyResponse
+	func fetchCoinPriceHistory(request: RequestProvider) async throws -> CoinPriceHistoryResponse
 }
 
 /// A concrete implementation of `CoinPriceHistoryServiceProvider` that fetches and processes coin price history details.
 ///
-/// This service fetches raw data using a `NetworkProvider` and processes it into a `CoinPriceHistroyResponse` using
+/// This service fetches raw data using a `NetworkProvider` and processes it into a `CoinPriceHistoryResponse` using
 /// a `CoinPriceHistoryProcessor`.
 ///
 /// - Properties:
 ///   - `networkManager`: The `NetworkProvider` instance responsible for fetching raw data.
-///   - `processor`: The `CoinPriceHistoryProcessor` used to process raw data into a `CoinPriceHistroyResponse` object.
+///   - `processor`: The `CoinPriceHistoryProcessor` used to process raw data into a `CoinPriceHistoryResponse` object.
 class CoinPriceHistoryService: CoinPriceHistoryServiceProvider {
 
 	// MARK: - Properties
@@ -56,12 +56,12 @@ class CoinPriceHistoryService: CoinPriceHistoryServiceProvider {
 	/// Fetches and processes coin price history data based on the provided request.
 	///
 	/// This method fetches raw data using the provided `RequestProvider` and processes it into a
-	/// `CoinPriceHistroyResponse` model. If any error occurs during fetching or processing, it is thrown.
+	/// `CoinPriceHistoryResponse` model. If any error occurs during fetching or processing, it is thrown.
 	///
 	/// - Parameter request: A `RequestProvider` that creates a `URLRequest`.
-	/// - Returns: A processed `CoinPriceHistroyResponse` containing the coin price history data.
+	/// - Returns: A processed `CoinPriceHistoryResponse` containing the coin price history data.
 	/// - Throws: An error if there is an issue with the network request or processing.
-	func fetchCointPriceHistory(request: RequestProvider) async throws -> CoinPriceHistroyResponse {
+	func fetchCoinPriceHistory(request: RequestProvider) async throws -> CoinPriceHistoryResponse {
 		// Create the network request
 		let request = try request.createRequest()
 

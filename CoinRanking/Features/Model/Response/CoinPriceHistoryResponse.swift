@@ -1,5 +1,5 @@
 //
-//  CoinPriceHistroyResponse.swift
+//  CoinPriceHistoryResponse.swift
 //  CoinRanking
 //
 //  Created by Amol Prakash on 19/01/25.
@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - PriceHistoryResponse
-struct CoinPriceHistroyResponse: Codable {
+struct CoinPriceHistoryResponse: Codable {
 	let status: String
 	let data: PriceData
 }
@@ -40,4 +40,16 @@ struct History: Codable, Identifiable {
 
 extension Date {
 	static let formatter = DateFormatter()
+}
+
+extension CoinPriceHistoryResponse {
+    static var mockData: Self {
+        guard let fileURL = Bundle.main.url(forResource: "PriceHistory", withExtension: "json"),
+              let data = try? Data(contentsOf: fileURL) else {
+            fatalError("Couldn't find Coins.json in main bundle.")
+        }
+
+        let decoder = JSONDecoder()
+        return try! decoder.decode(CoinPriceHistoryResponse.self, from: data)
+    }
 }

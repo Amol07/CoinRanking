@@ -8,11 +8,14 @@
 import UIKit
 
 class FilterViewController: UIViewController {
+
+    // MARK: - Private properties
     private let viewModel: FilterViewModel
 
     private var selectedFilter: FilterOption?
     private var selectedOrder: OrderOption?
 
+    // MARK: - Initialiser
     init(viewModel: FilterViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -24,12 +27,14 @@ class FilterViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Lifecycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         setupDrawerView()
     }
 
+    // MARK: - Private methods
     private func setupDrawerView() {
         let containerView = UIView()
         containerView.backgroundColor = .white
@@ -109,21 +114,25 @@ class FilterViewController: UIViewController {
         ])
     }
 
-    @objc private func filterChanged(_ sender: UISegmentedControl) {
+    @objc
+    private func filterChanged(_ sender: UISegmentedControl) {
         selectedFilter = self.viewModel.filterOptions[sender.selectedSegmentIndex]
     }
 
-    @objc private func orderChanged(_ sender: UISegmentedControl) {
+    @objc
+    private func orderChanged(_ sender: UISegmentedControl) {
         selectedOrder = self.viewModel.orderOptions[sender.selectedSegmentIndex]
     }
 
-    @objc private func saveFilters() {
+    @objc
+    private func saveFilters() {
         print("Selected Filter: \(selectedFilter?.textValue ?? "None"), Order: \(selectedOrder?.textValue ?? "None")")
         self.viewModel.save(selectedFilter: selectedFilter, selectedOrder: selectedOrder)
         dismiss(animated: true, completion: nil)
     }
 
-    @objc private func resetFilters() {
+    @objc
+    private func resetFilters() {
         self.viewModel.reset()
         dismiss(animated: true, completion: nil)
     }

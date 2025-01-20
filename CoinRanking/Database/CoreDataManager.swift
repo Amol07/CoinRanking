@@ -7,9 +7,23 @@
 
 import CoreData
 
+/// A protocol that defines methods for managing favorite coins in a Core Data context.
 protocol CoreDataFavoriteCoinProvider {
+
+    /// Fetches all favorite coins stored in the Core Data database.
+    ///
+    /// - Returns: An array of `CoinEntity` objects representing the favorite coins.
     func fetchFavoriteCoins() -> [CoinEntity]
+
+    /// Saves a new favorite coin to the Core Data database.
+    ///
+    /// - Parameter coin: An instance of `Coin` that represents the coin to be saved as a favorite.
     func saveFavoriteCoin(_ coin: Coin)
+
+    /// Removes a favorite coin from the Core Data database using its unique identifier (UUID).
+    ///
+    /// - Parameter id: A `String` representing the UUID of the coin to be removed.
+    /// - Returns: A `Bool` indicating whether the removal was successful (`true`) or not (`false`).
     @discardableResult
     func removeFavoriteCoin(withUUID id: String) -> Bool
 }
@@ -22,7 +36,7 @@ class CoreDataManager {
     /**
      * The persistent container for the app's Core Data stack.
      *
-     * This is a lazy-loaded property that creates a persistent container with the name "BookStore"
+     * This is a lazy-loaded property that creates a persistent container with the name "CoinRanking"
      * and loads the persistent stores. If there's an error loading the stores, it will fatal error.
      */
     private lazy var persistentContainer: NSPersistentContainer = {

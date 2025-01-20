@@ -6,32 +6,32 @@
 //
 
 struct FavoriteCoinDBProvider {
-
+    
     let favoriteCoinHandler: CoreDataFavoriteCoinProvider
-
+    
     init(favoriteCoinHandler: CoreDataFavoriteCoinProvider = CoreDataManager.shared) {
         self.favoriteCoinHandler = favoriteCoinHandler
     }
 }
 
 final class FavoriteCoinHandler {
-
+    
     static let shared = FavoriteCoinHandler()
     var dbProvider: FavoriteCoinDBProvider = FavoriteCoinDBProvider()
-
+    
     private init() {}
-
+    
     private(set) var favoriteCoins: Set<CoinEntity> = []
-
+    
     func updateFavoriteCoins() {
         favoriteCoins.removeAll()
         self.dbProvider.favoriteCoinHandler.fetchFavoriteCoins()
             .compactMap{ $0 }
             .forEach {
-            self.favoriteCoins.insert($0)
-        }
+                self.favoriteCoins.insert($0)
+            }
     }
-
+    
     func toggleFavoriteCoin(_ coin: Coin) {
         let isAlreadyFavorite = favoriteCoins.contains { $0.uuid == coin.uuid }
         if isAlreadyFavorite {
@@ -41,7 +41,7 @@ final class FavoriteCoinHandler {
         }
         self.updateFavoriteCoins()
     }
-
+    
     func removeFavoriteCoin(_ coin: CoinEntity) {
         self.dbProvider.favoriteCoinHandler.removeFavoriteCoin(withUUID: coin.uuid)
         self.updateFavoriteCoins()

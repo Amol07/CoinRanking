@@ -9,10 +9,10 @@ import Combine
 import UIKit
 
 class FavoriteCoinsViewController: UIViewController {
-
+    
     private let viewModel: FavoriteCoinsViewModel = FavoriteCoinsViewModel()
     private var subscribers: Set<AnyCancellable> = []
-
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -22,23 +22,23 @@ class FavoriteCoinsViewController: UIViewController {
         tableView.backgroundColor = .clear
         return tableView
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Favorite Coins"
         self.setupTableView()
         self.bindViewModel()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         debugPrint("View will appear is called in FavoriteCoinsViewController")
         self.viewModel.loadFavoriteCoins()
     }
-
+    
     func setupTableView() {
         view.addSubview(self.tableView)
-
+        
         NSLayoutConstraint.activate([
             self.tableView.topAnchor.constraint(equalTo: view.topAnchor),
             self.tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -46,7 +46,7 @@ class FavoriteCoinsViewController: UIViewController {
             self.tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
-
+    
     func bindViewModel() {
         viewModel.$favoriteCoins
             .receive(on: DispatchQueue.main)
@@ -81,7 +81,7 @@ extension FavoriteCoinsViewController: UITableViewDelegate {
         }
         favoriteAction.backgroundColor = .systemBlue
         favoriteAction.image = UIImage(systemName: imageName)
-
+        
         let configuration = UISwipeActionsConfiguration(actions: [favoriteAction])
         configuration.performsFirstActionWithFullSwipe = true
         return configuration

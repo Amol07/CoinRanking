@@ -25,28 +25,30 @@ class CoinViewModel {
 	var uuid: String { coin.uuid }
 
 	/// The URL of the coin's icon image.
-	var iconURL: String { coin.iconURL }
+	var iconURL: String? { coin.iconURL }
 
 	/// The name of the coin.
-	var name: String { coin.name }
+	var name: String { coin.name ?? "N/A"}
 
 	/// The symbol of the coin (e.g., BTC for Bitcoin).
-	var symbol: String { coin.symbol }
+	var symbol: String { coin.symbol ?? "N/A"}
 
 	/// The price of the coin, formatted as a currency string (e.g., "$ 12.34").
 	var formattedPrice: String {
-		guard let price = Double(coin.price) else { return "N/A" }
-		return String(format: "$ %.2f", price)
+		guard let price = coin.price,
+			  let value = Double(price) else { return "N/A" }
+		return String(format: "$ %.2f", value)
 	}
 
 	/// The change in the coin's price, formatted with an arrow symbol (e.g., "▲ 5.23%").
 	var changeText: String {
+		guard let change = coin.change else { return "--" }
 		let symbol = isNegativeChange ? "▼" : "▲"
-		return "\(symbol) \(coin.change) %"
+		return "\(symbol) \(change) %"
 	}
 
 	/// A boolean value indicating whether the coin's price change is negative.
-	var isNegativeChange: Bool { coin.change.starts(with: "-") }
+	var isNegativeChange: Bool { coin.change?.starts(with: "-") ?? false }
 
 	/// The market capitalization of the coin, formatted as a currency string.
 	var formattedMarketCap: String { CurrencyFormatter.formattedValue(coin.marketCap) }
@@ -55,23 +57,32 @@ class CoinViewModel {
 	var formatted24HourVolume: String { CurrencyFormatter.formattedValue(coin.the24HVolume) }
 
 	/// The all-time high price of the coin, formatted as a currency string.
-	var formattedAllTimeHigh: String { CurrencyFormatter.formattedValue(coin.allTimeHigh.price) }
+	var formattedAllTimeHigh: String { CurrencyFormatter.formattedValue(coin.allTimeHigh?.price) }
 
 	/// The rank of the coin in the market (e.g., "1").
-	var rank: String { "\(coin.rank)" }
+	var rank: String {
+		guard let rank = coin.rank else { return "N/A" }
+		return "\(rank)"
+	}
 
 	/// The circulating supply of the coin, formatted as a currency string.
-	var formattedCirculatingSupply: String { CurrencyFormatter.formattedValue(coin.supply.circulating) }
+	var formattedCirculatingSupply: String { CurrencyFormatter.formattedValue(coin.supply?.circulating) }
 
 	/// The total supply of the coin, formatted as a currency string.
-	var formattedTotalSupply: String { CurrencyFormatter.formattedValue(coin.supply.total) }
+	var formattedTotalSupply: String { CurrencyFormatter.formattedValue(coin.supply?.total) }
 
 	/// The maximum supply of the coin, formatted as a currency string.
-	var formattedMaxSupply: String { CurrencyFormatter.formattedValue(coin.supply.max) }
+	var formattedMaxSupply: String { CurrencyFormatter.formattedValue(coin.supply?.max) }
+
+	/// Returns the number of exchanges for the coin as a string, or "N/A" if the data is unavailable.
+	var numberOfExchanges: String {
+		guard let numberOfExchanges = coin.numberOfExchanges else { return "N/A" }
+		return "\(numberOfExchanges)"
+	}
 
 	/// A description of the coin.
-	var description: String { coin.description }
+	var description: String { coin.description?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "N/A"}
 
 	/// The URL of the coin's official website.
-	var webUrl: String { coin.websiteURL }
+	var webUrl: String? { coin.websiteURL }
 }

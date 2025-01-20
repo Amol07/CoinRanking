@@ -5,39 +5,33 @@
 //  Created by Amol Prakash on 20/01/25.
 //
 
-
 import XCTest
 import Combine
 @testable import CoinRanking
 
 final class CoinListViewModelTests: XCTestCase {
-    private var viewModel: CoinListViewModel!
-    private var mockService: MockCoinListService!
     private var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
         super.setUp()
-        mockService = MockCoinListService()
-        viewModel = CoinListViewModel(mockService)
         cancellables = []
     }
 
     override func tearDown() {
-        viewModel = nil
-        mockService = nil
         cancellables = nil
         super.tearDown()
     }
 
-    func testInitialState() {
+	func testInitialState() throws {
+		let service = MockCoinListService(results: .success(DummyData.coinsResponse))
+		let viewModel = CoinListViewModel(service)
         XCTAssertFalse(viewModel.isFetching, "Initial fetching state should be false.")
         XCTAssertTrue(viewModel.coins.isEmpty, "Initial coins list should be empty.")
     }
 
-    func testFetchCoins() async {
-        // Arrange
-        mockService.mockResponse = self.mockCoinListResponse
-
+    func testFetchCoins() async throws {
+		let service = MockCoinListService(results: .success(DummyData.coinsResponse))
+		let viewModel = CoinListViewModel(service)
         // Act
         await viewModel.fetchCoins()
 
@@ -47,10 +41,9 @@ final class CoinListViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.isFetching, false, "Fetching state should be false after fetch.")
     }
 
-    func testFetchMoreCoins() async {
-        // Arrange
-        mockService.mockResponse = self.mockCoinListResponse
-
+    func testFetchMoreCoins() async throws {
+		let service = MockCoinListService(results: .success(DummyData.coinsResponse))
+		let viewModel = CoinListViewModel(service)
         // Act
         await viewModel.fetchMoreCoins()
 
@@ -60,11 +53,10 @@ final class CoinListViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.isFetching, false, "Fetching state should be false after fetch.")
     }
 
-    func testFetchCoinsFailure() async {
-        // Arrange
-        mockService.shouldFail = true
-
-        // Act
+	func testFetchCoinsFailure() async throws {
+		let service = MockCoinListService(results: .failure(.networkError(.invalidResponse)))
+		let viewModel = CoinListViewModel(service)
+		// Act
         await viewModel.fetchCoins()
 
         // Assert
@@ -72,10 +64,11 @@ final class CoinListViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.isFetching, false, "Fetching state should be false after fetch failure.")
     }
 
-    func testBindFilterViewModel() async {
+    func testBindFilterViewModel() async throws {
         // Arrange
         let expectation = XCTestExpectation(description: "Should fetch coins when filter is applied.")
-        mockService.mockResponse = self.mockCoinListResponse
+		let service = MockCoinListService(results: .success(DummyData.coinsResponse))
+		let viewModel = CoinListViewModel(service)
 
         // Act
         viewModel.filterViewModel.applyFilterPublisher
@@ -95,32 +88,9 @@ final class CoinListViewModelTests: XCTestCase {
     }
 }
 
-private extension CoinListViewModelTests {
-
-    var mockCoinListResponse: CoinListResponse {
-        guard let fileURL = Bundle.main.url(forResource: "Coins", withExtension: "json"),
-              let data = try? Data(contentsOf: fileURL) else {
-            fatalError("Couldn't find Coins.json in main bundle.")
-        }
-
-        let decoder = JSONDecoder()
-        return try! decoder.decode(CoinListResponse.self, from: data)
-
+// MARK: - Mocks
+final class MockCoinListService: SimpleMockService<CoinListResponse>, CoinListServiceProvider {
+    func fetchCoinList(request: any RequestProvider) async throws -> CoinListResponse {
+		try await self.asyncResults()
     }
-}
-
-// Mock service implementation for testing.
-final class MockCoinListService: CoinListServiceProvider {
-    func fetchCoinList(request: any CoinRanking.RequestProvider) async throws -> CoinRanking.CoinListResponse {
-        if shouldFail {
-            throw NSError(domain: "Mock Error", code: 1, userInfo: nil)
-        }
-        guard let response = mockResponse else {
-            throw NSError(domain: "No Mock Response", code: 2, userInfo: nil)
-        }
-        return response
-    }
-    
-    var shouldFail: Bool = false
-    var mockResponse: CoinListResponse?
 }

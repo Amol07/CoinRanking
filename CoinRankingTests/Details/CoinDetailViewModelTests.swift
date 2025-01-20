@@ -5,7 +5,6 @@
 //  Created by Amol Prakash on 20/01/25.
 //
 
-
 import XCTest
 @testable import CoinRanking
 
@@ -30,8 +29,8 @@ final class CoinDetailViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.selectedChartFilter, .twentyFourHours, "Default chart filter should be .twentyFourHours.")
     }
 
-    func testFetchCoinDetailsSuccess() async {
-        let mockService = MockCoinDetailServiceProvider(success: true)
+	func testFetchCoinDetailsSuccess() async throws {
+		let mockService = MockCoinDetailServiceProvider(results: .success(DummyData.coinDetailResponse))
         await viewModel.fetchCoinDetails(timePeriod: "24h", service: mockService)
 
         guard case .loaded(let coinViewModel) = viewModel.state else {
@@ -42,14 +41,14 @@ final class CoinDetailViewModelTests: XCTestCase {
     }
 
     func testFetchCoinDetailsFailure() async {
-        let mockService = MockCoinDetailServiceProvider(success: false)
+		let mockService = MockCoinDetailServiceProvider(results: .failure(.networkError(.invalidResponse)))
         await viewModel.fetchCoinDetails(timePeriod: "24h", service: mockService)
 
         XCTAssertEqual(viewModel.state, .error, "State should be .error after failed fetch.")
     }
 
-    func testFetchPriceHistorySuccess() async {
-        let mockService = MockCoinPriceHistoryServiceProvider(success: true)
+    func testFetchPriceHistorySuccess() async throws {
+		let mockService = MockCoinPriceHistoryServiceProvider(results: .success(DummyData.coinPriceHistoryResponse))
         await viewModel.fetchPriceHistory(timePeriod: "24h", service: mockService)
 
         XCTAssertNotNil(viewModel.history, "History should not be nil after successful fetch.")
@@ -57,15 +56,15 @@ final class CoinDetailViewModelTests: XCTestCase {
     }
 
     func testFetchPriceHistoryFailure() async {
-        let mockService = MockCoinPriceHistoryServiceProvider(success: false)
+		let mockService = MockCoinPriceHistoryServiceProvider(results: .failure(.networkError(.invalidResponse)))
         await viewModel.fetchPriceHistory(timePeriod: "24h", service: mockService)
 
         XCTAssertNil(viewModel.history, "History should be nil after failed fetch.")
     }
 
     func testGetFilteredChartData() {
-        viewModel.state = .loaded(CoinViewModel(coin: CoinRanking.CoinDetailResponse.mockData.data.coin))
-        viewModel.history = CoinRanking.CoinPriceHistoryResponse.mockData.data.history
+		viewModel.state = .loaded(CoinViewModel(coin: DummyData.coinDetailResponse.data.coin!))
+		viewModel.history = DummyData.coinPriceHistoryResponse.data.history
 
         let filteredData = viewModel.getFilteredChartData()
 
@@ -75,7 +74,6 @@ final class CoinDetailViewModelTests: XCTestCase {
     func testGetFilteredChartDataEmptyState() {
         viewModel.state = .empty
         viewModel.history = nil
-
         let filteredData = viewModel.getFilteredChartData()
 
         XCTAssertTrue(filteredData.isEmpty, "Filtered data should be empty when state is not .loaded.")
@@ -84,36 +82,14 @@ final class CoinDetailViewModelTests: XCTestCase {
 
 // MARK: - Mocks
 
-class MockCoinDetailServiceProvider: CoinDetailServiceProvider {
-    
-    private let success: Bool
-
-    init(success: Bool) {
-        self.success = success
-    }
-
-    func fetchCoinDetail(request: any CoinRanking.RequestProvider) async throws -> CoinRanking.CoinDetailResponse {
-        if success {
-            return CoinRanking.CoinDetailResponse.mockData
-        } else {
-            throw NSError(domain: "TestError", code: 1, userInfo: nil)
-        }
+class MockCoinDetailServiceProvider: SimpleMockService<CoinDetailResponse>, CoinDetailServiceProvider {
+    func fetchCoinDetail(request: any CoinRanking.RequestProvider) async throws -> CoinDetailResponse {
+		try await asyncResults()
     }
 }
 
-class MockCoinPriceHistoryServiceProvider: CoinPriceHistoryServiceProvider {
-    
-    private let success: Bool
-
-    init(success: Bool) {
-        self.success = success
-    }
-
-    func fetchCoinPriceHistory(request: any CoinRanking.RequestProvider) async throws -> CoinRanking.CoinPriceHistoryResponse {
-        if success {
-            return CoinRanking.CoinPriceHistoryResponse.mockData
-        } else {
-            throw NSError(domain: "TestError", code: 1, userInfo: nil)
-        }
+class MockCoinPriceHistoryServiceProvider: SimpleMockService<CoinPriceHistoryResponse>, CoinPriceHistoryServiceProvider {
+    func fetchCoinPriceHistory(request: any CoinRanking.RequestProvider) async throws -> CoinPriceHistoryResponse {
+		try await asyncResults()
     }
 }

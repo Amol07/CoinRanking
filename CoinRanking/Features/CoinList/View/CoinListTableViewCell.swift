@@ -1,20 +1,21 @@
 //
-//  CoinTableViewCell.swift
+//  CoinListTableViewCell.swift
 //  CoinRanking
 //
 //  Created by Amol Prakash on 19/01/25.
 //
 
 import UIKit
+import SDWebImage
 
 /// A UITableViewCell subclass that displays information about a cryptocurrency.
 /// This cell includes a thumbnail image, the coin's name, symbol, price, and percentage change.
-class CoinTableViewCell: UITableViewCell {
+class CoinListTableViewCell: UITableViewCell {
 
     // MARK: - Public properties
 
-    /// The reuse identifier for the CoinTableViewCell.
-    static let identifier = "CoinTableViewCell"
+    /// The reuse identifier for the CoinListTableViewCell.
+    static let identifier = "CoinListTableViewCell"
 
     // MARK: - Private views
 
@@ -22,12 +23,13 @@ class CoinTableViewCell: UITableViewCell {
     private let thumbnailImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.layer.cornerRadius = 30
+        imageView.layer.cornerRadius = 25
         imageView.clipsToBounds = true
-        imageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(systemName: "dollarsign.circle.fill")
+		imageView.tintColor = .black
         return imageView
     }()
 
@@ -129,7 +131,7 @@ class CoinTableViewCell: UITableViewCell {
 
     // MARK: - Initialiser
 
-    /// Initializes a new CoinTableViewCell with the specified style and reuse identifier.
+    /// Initializes a new CoinListTableViewCell with the specified style and reuse identifier.
     /// - Parameters:
     ///   - style: The cell style.
     ///   - reuseIdentifier: The reuse identifier for the cell.
@@ -155,35 +157,25 @@ class CoinTableViewCell: UITableViewCell {
         let changeIsPositive = !((coin.change ?? "0.0").starts(with: "-"))
         percentChangeLabel.text = "\(changeIsPositive ? "▲" : "▼") \(coin.change ?? "0.0") %"
         percentChangeLabel.textColor = changeIsPositive ? .green : .red
-
-        // Load the coin's thumbnail image asynchronously.
-        Task { @MainActor in
-            thumbnailImageView.image = await loadImage(from: coin.iconURL)
-        }
+		loadImage(from: coin.iconURL)
     }
 
     // MARK: - Private methods
 
     /// Loads an image from the specified URL asynchronously.
     /// - Parameter urlString: The URL string of the image to load.
-    /// - Returns: The loaded UIImage, or a default image if loading fails.
-    private func loadImage(from urlString: String) async -> UIImage? {
+    private func loadImage(from urlString: String) {
         let placeholderImage: UIImage? = {
             let image = UIImage(systemName: "dollarsign.circle.fill")
-            return image?.withTintColor(.gray)
+            return image
         }()
-        guard let url = URL(string: urlString) else { return placeholderImage }
-        if url.absoluteString.hasSuffix(".svg") {
-            return placeholderImage // TO DO: Implement logic to download and show svg image
-        } else {
-            do {
-                let (data, _) = try await URLSession.shared.data(from: url)
-                return UIImage(data: data)
-            } catch {
-                print("Failed to load image: \(error)")
-                return UIImage(systemName: "dollarsign.circle.fill")
-            }
-        }
+
+		if urlString.hasSuffix(".svg") {
+			thumbnailImageView.image = placeholderImage
+		} else {
+			thumbnailImageView.sd_setImage(with: URL(string: urlString),
+										   placeholderImage: placeholderImage)
+		}
     }
 
     /// Sets up the view hierarchy and layout constraints for the cell.

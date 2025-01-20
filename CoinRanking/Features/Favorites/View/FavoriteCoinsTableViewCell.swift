@@ -22,6 +22,7 @@ class FavoriteCoinsTableViewCell: UITableViewCell {
         imageView.widthAnchor.constraint(equalToConstant: 60).isActive = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(systemName: "dollarsign.circle.fill")
+		imageView.tintColor = .black
         return imageView
     }()
 
@@ -81,28 +82,24 @@ class FavoriteCoinsTableViewCell: UITableViewCell {
     func configure(with coin: CoinEntity) {
         symbolLabel.text = coin.symbol
         nameLabel.text = coin.name
-
-        // Loads the thumbnail image asynchronously.
-        Task { @MainActor in
-            thumbnailImageView.image = await loadImage(from: coin.iconURL)
-        }
+		loadImage(from: coin.iconURL)
     }
 
     /// Asynchronously loads an image from the provided URL.
     /// - Parameter urlString: The URL string of the image.
-    /// - Returns: The loaded `UIImage` or a default placeholder image.
-    private func loadImage(from urlString: String) async -> UIImage? {
-        guard let url = URL(string: urlString) else {
-            return UIImage(systemName: "dollarsign.circle.fill")
-        }
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            return UIImage(data: data)
-        } catch {
-            print("Failed to load image: \(error)")
-            return UIImage(systemName: "dollarsign.circle.fill")
-        }
-    }
+	private func loadImage(from urlString: String) {
+		let placeholderImage: UIImage? = {
+			let image = UIImage(systemName: "dollarsign.circle.fill")
+			return image
+		}()
+
+		if urlString.hasSuffix(".svg") {
+			thumbnailImageView.image = placeholderImage
+		} else {
+			thumbnailImageView.sd_setImage(with: URL(string: urlString),
+										   placeholderImage: placeholderImage)
+		}
+	}
 
     /// Sets up the view hierarchy and constraints.
     private func setupView() {

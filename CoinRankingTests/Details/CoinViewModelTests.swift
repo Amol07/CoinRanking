@@ -11,7 +11,7 @@ import XCTest
 final class CoinViewModelTests: XCTestCase {
 
     private var mockCoin: CoinDetails!
-    private var viewModel = CoinViewModel(coin: CoinDetailResponse.mockData.data.coin)
+	private var viewModel = CoinViewModel(coin: DummyData.coinDetailResponse.data.coin!)
 
     func testUUID() {
         XCTAssertEqual(viewModel.uuid, "Qwsogvtv82FCd")
@@ -42,15 +42,15 @@ final class CoinViewModelTests: XCTestCase {
     }
 
     func testFormattedMarketCap() {
-        XCTAssertEqual(viewModel.formattedMarketCap, CurrencyFormatter.formattedValue(CoinDetailResponse.mockData.data.coin.marketCap))
+		XCTAssertEqual(viewModel.formattedMarketCap, CurrencyFormatter.formattedValue(DummyData.coinDetailResponse.data.coin?.marketCap))
     }
 
     func testFormatted24HourVolume() {
-        XCTAssertEqual(viewModel.formatted24HourVolume, CurrencyFormatter.formattedValue(CoinDetailResponse.mockData.data.coin.the24HVolume))
+        XCTAssertEqual(viewModel.formatted24HourVolume, CurrencyFormatter.formattedValue(DummyData.coinDetailResponse.data.coin?.the24HVolume))
     }
 
     func testFormattedAllTimeHigh() {
-        XCTAssertEqual(viewModel.formattedAllTimeHigh, CurrencyFormatter.formattedValue(CoinDetailResponse.mockData.data.coin.allTimeHigh.price))
+        XCTAssertEqual(viewModel.formattedAllTimeHigh, CurrencyFormatter.formattedValue(DummyData.coinDetailResponse.data.coin?.allTimeHigh?.price))
     }
 
     func testRank() {
@@ -58,23 +58,26 @@ final class CoinViewModelTests: XCTestCase {
     }
 
     func testFormattedCirculatingSupply() {
-        XCTAssertEqual(viewModel.formattedCirculatingSupply, CurrencyFormatter.formattedValue(CoinDetailResponse.mockData.data.coin.supply.circulating))
+        XCTAssertEqual(viewModel.formattedCirculatingSupply, CurrencyFormatter.formattedValue(DummyData.coinDetailResponse.data.coin?.supply?.circulating))
     }
 
     func testFormattedTotalSupply() {
-        XCTAssertEqual(viewModel.formattedTotalSupply, CurrencyFormatter.formattedValue(CoinDetailResponse.mockData.data.coin.supply.total))
+        XCTAssertEqual(viewModel.formattedTotalSupply, CurrencyFormatter.formattedValue(DummyData.coinDetailResponse.data.coin?.supply?.total))
     }
 
     func testFormattedMaxSupply() {
-        XCTAssertEqual(viewModel.formattedMaxSupply, CurrencyFormatter.formattedValue(CoinDetailResponse.mockData.data.coin.supply.max))
+		XCTAssertEqual(viewModel.formattedMaxSupply, CurrencyFormatter.formattedValue(DummyData.coinDetailResponse.data.coin?.supply?.max))
     }
 
     func testDescription() {
         XCTAssertEqual(viewModel.description, "Bitcoin is the first decentralized digital currency.")
     }
 
+	func testNumberOfExchanges() {
+		XCTAssertEqual(viewModel.numberOfExchanges, "190")
+	}
+
     func testWebUrl() {
         XCTAssertEqual(viewModel.webUrl, "https://bitcoin.org")
     }
-
 }

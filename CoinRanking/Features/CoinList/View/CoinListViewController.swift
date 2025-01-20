@@ -16,7 +16,7 @@ class CoinListViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(CoinTableViewCell.self, forCellReuseIdentifier: CoinTableViewCell.identifier)
+        tableView.register(CoinListTableViewCell.self, forCellReuseIdentifier: CoinListTableViewCell.identifier)
         tableView.dataSource = self
         tableView.prefetchDataSource = self
         tableView.delegate = self
@@ -106,7 +106,7 @@ extension CoinListViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: CoinTableViewCell.identifier, for: indexPath) as? CoinTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CoinListTableViewCell.identifier, for: indexPath) as? CoinListTableViewCell else {
             return UITableViewCell()
         }
         let coin = viewModel.coins[indexPath.row]
@@ -141,7 +141,8 @@ extension CoinListViewController: UITableViewDelegate {
 
 extension CoinListViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        if indexPaths.contains(where: { $0.row >= viewModel.coins.count - 5 }) {
+        if viewModel.shouldFetchMoreRecords,
+			indexPaths.contains(where: { $0.row >= viewModel.coins.count - 5 }) {
             Task {
                 await viewModel.fetchMoreCoins()
                 tableView.reloadData()

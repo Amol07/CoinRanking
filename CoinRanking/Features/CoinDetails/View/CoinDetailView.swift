@@ -6,6 +6,7 @@
 //
 
 import Charts
+import SDWebImageSwiftUI
 import SwiftUI
 
 // MARK: - CoinDetailView
@@ -56,8 +57,20 @@ struct HeaderSection: View {
 
     var body: some View {
         HStack(spacing: 16) {
-			if let url = URL(string: coin.iconURL) {
-				SVGImageView(url: url, width: 60, height: 60)
+			if let iconUrl = coin.iconURL,
+			   !iconUrl.hasSuffix(".svg"),
+			   let url = URL(string: iconUrl) {
+				WebImage(url: url)
+					.resizable()
+					.scaledToFit()
+					.frame(width: 50, height: 50)
+					.cornerRadius(25)
+			} else {
+				Image(systemName: "dollarsign.circle.fill")
+					.resizable()
+					.scaledToFit()
+					.frame(width: 50, height: 50)
+					.cornerRadius(25)
 			}
 
             VStack(alignment: .leading) {
@@ -184,7 +197,8 @@ struct AboutSection: View {
             Text(coin.description)
                 .font(.body)
 
-			if let url = URL(string: coin.webUrl) {
+			if let webUrl = coin.webUrl,
+			   let url = URL(string: webUrl) {
 				Link(destination: url) {
 					Text("Official Website")
 				}
@@ -203,10 +217,13 @@ struct SupplySection: View {
                 .font(.headline)
 
             HStack {
-				StatCard(title: "Circulating", value: coin.formattedCirculatingSupply)
 				StatCard(title: "Total", value: coin.formattedTotalSupply)
 				StatCard(title: "Max", value: coin.formattedMaxSupply)
             }
+			HStack {
+				StatCard(title: "Circulating", value: coin.formattedCirculatingSupply)
+				StatCard(title: "Exchanges", value: "\(coin.numberOfExchanges)")
+			}
         }
     }
 }

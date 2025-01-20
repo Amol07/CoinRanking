@@ -72,8 +72,12 @@ class CoinDetailViewModel: ObservableObject {
 		do {
 			let request = CoinRequest.coinDetails(uuid: coinID, timePeriod: timePeriod)
 			let response = try await service.fetchCoinDetail(request: request)
-			let coinViewModel = CoinViewModel(coin: response.data.coin)
-			self.state = .loaded(coinViewModel)
+			if let coin = response.data.coin {
+				let coinViewModel = CoinViewModel(coin: coin)
+				self.state = .loaded(coinViewModel)
+			} else {
+				self.state = .empty
+			}
 		} catch {
 			// Handle errors and update state to error
 			print("Error fetching coin details: \(error.localizedDescription)")

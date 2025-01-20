@@ -22,7 +22,7 @@ class CoinListViewModel {
     private let service: CoinListServiceProvider
 
     /// The selected time period for filtering the coin list.
-    private var timePeriod: TimePeriod = .oneDay
+	private var timePeriod: String = "24h"
 
     // MARK: - Public properties
 
@@ -43,6 +43,11 @@ class CoinListViewModel {
         self.service = service
         self.bindFilterViewModel()
     }
+
+	/// Indicates whether more records should be fetched based on the current count of coins being less than 100.
+	var shouldFetchMoreRecords: Bool {
+		coins.count < 100
+	}
 
     // MARK: - Public methods
 
@@ -92,7 +97,7 @@ class CoinListViewModel {
         return CoinRequest.coinList(
             offset: offSet,
             limit: limit,
-            timePeriod: self.timePeriod.rawValue,
+            timePeriod: self.timePeriod,
             orderBy: self.filterViewModel.selectedFilter?.rawValue,
             orderDirection: self.filterViewModel.selectedOrder?.rawValue
         )
@@ -123,4 +128,3 @@ private extension CoinListViewModel {
     /// The maximum number of coins to fetch per page.
     var limit: Int { 20 }
 }
-

@@ -24,10 +24,24 @@ class FavoriteCoinsViewController: UIViewController {
         return tableView
     }()
 
+	/// Label to display the coin's name.
+	private lazy var noResultsLabel: UILabel = {
+		let label = UILabel()
+		label.font = UIFont.systemFont(ofSize: 14)
+		label.textColor = .gray
+		label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+		label.translatesAutoresizingMaskIntoConstraints = false
+		label.text = "Your favourite crypto coins will appear here..."
+		label.lineBreakMode = .byWordWrapping
+		label.numberOfLines = 0
+		label.textAlignment = .center
+		return label
+	}()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Favorite Coins"
-        self.setupTableView()
+        self.setupUI()
         self.bindViewModel()
     }
 
@@ -37,8 +51,8 @@ class FavoriteCoinsViewController: UIViewController {
         self.viewModel.loadFavoriteCoins()
     }
 
-    /// Sets up the table view and adds it to the view hierarchy with constraints.
-    func setupTableView() {
+    /// Sets up the required custom views and adds it to the view hierarchy with constraints.
+    func setupUI() {
         view.addSubview(self.tableView)
 
         NSLayoutConstraint.activate([
@@ -47,6 +61,14 @@ class FavoriteCoinsViewController: UIViewController {
             self.tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             self.tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+
+		view.addSubview(self.noResultsLabel)
+
+		NSLayoutConstraint.activate([
+			self.noResultsLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+			self.noResultsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+			self.noResultsLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+		])
     }
 
     /// Binds the view model's `favoriteCoins` property to the table view.
@@ -55,6 +77,7 @@ class FavoriteCoinsViewController: UIViewController {
         viewModel.$favoriteCoins
             .receive(on: DispatchQueue.main)
             .sink { _ in
+				self.noResultsLabel.isHidden = !self.viewModel.favoriteCoins.isEmpty
                 self.tableView.reloadData()
             }
             .store(in: &self.subscribers)

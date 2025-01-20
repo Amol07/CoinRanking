@@ -168,13 +168,21 @@ class CoinTableViewCell: UITableViewCell {
     /// - Parameter urlString: The URL string of the image to load.
     /// - Returns: The loaded UIImage, or a default image if loading fails.
     private func loadImage(from urlString: String) async -> UIImage? {
-        guard let url = URL(string: urlString) else { return UIImage(systemName: "dollarsign.circle.fill") }
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            return UIImage(data: data)
-        } catch {
-            print("Failed to load image: \(error)")
-            return UIImage(systemName: "dollarsign.circle.fill")
+        let placeholderImage: UIImage? = {
+            let image = UIImage(systemName: "dollarsign.circle.fill")
+            return image?.withTintColor(.gray)
+        }()
+        guard let url = URL(string: urlString) else { return placeholderImage }
+        if url.absoluteString.hasSuffix(".svg") {
+            return placeholderImage // TO DO: Implement logic to download and show svg image
+        } else {
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                return UIImage(data: data)
+            } catch {
+                print("Failed to load image: \(error)")
+                return UIImage(systemName: "dollarsign.circle.fill")
+            }
         }
     }
 

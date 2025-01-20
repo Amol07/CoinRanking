@@ -175,8 +175,11 @@ struct AboutSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("About")
-                .font(.headline)
+            HStack {
+                Text("About")
+                    .font(.headline)
+                Spacer()
+            }
 
             Text(coin.description)
                 .font(.body)

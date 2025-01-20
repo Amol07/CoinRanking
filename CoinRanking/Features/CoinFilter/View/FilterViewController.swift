@@ -48,7 +48,7 @@ class FilterViewController: UIViewController {
 
     // UISegmentedControl for selecting an order option
     private lazy var orderSegmentedControl: UISegmentedControl = {
-        let orderSegmentedControl = UISegmentedControl(items: self.viewModel.orderOptions.map{ $0.textValue })
+        let orderSegmentedControl = UISegmentedControl(items: self.viewModel.orderOptions.map { $0.textValue })
         orderSegmentedControl.addTarget(self, action: #selector(orderChanged(_:)), for: .valueChanged)
         orderSegmentedControl.translatesAutoresizingMaskIntoConstraints = false
         if let selectedOrder = viewModel.selectedOrder, let index = self.viewModel.orderOptions.firstIndex(of: selectedOrder) {
@@ -140,7 +140,7 @@ class FilterViewController: UIViewController {
             containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            containerView.heightAnchor.constraint(equalToConstant: 300)
+            containerView.heightAnchor.constraint(equalToConstant: 250)
         ])
     }
 

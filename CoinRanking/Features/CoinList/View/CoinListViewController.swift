@@ -66,7 +66,7 @@ private extension CoinListViewController {
     @objc
     func didTapFilterButton() {
         let filterViewController = FilterViewController(viewModel: viewModel.filterViewModel)
-        filterViewController.modalPresentationStyle = .overCurrentContext
+		filterViewController.modalPresentationStyle = .overFullScreen
         present(filterViewController, animated: true, completion: nil)
     }
 

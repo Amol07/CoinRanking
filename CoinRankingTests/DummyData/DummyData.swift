@@ -5,8 +5,8 @@
 //  Created by Amol Prakash on 21/01/25.
 //
 
-import Foundation
 @testable import CoinRanking
+import Foundation
 
 enum DummyData {
 	static var coinsResponse: CoinListResponse {

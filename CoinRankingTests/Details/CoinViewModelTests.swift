@@ -5,8 +5,8 @@
 //  Created by Amol Prakash on 20/01/25.
 //
 
-import XCTest
 @testable import CoinRanking
+import XCTest
 
 final class CoinViewModelTests: XCTestCase {
 

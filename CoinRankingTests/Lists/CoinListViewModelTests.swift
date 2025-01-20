@@ -5,9 +5,9 @@
 //  Created by Amol Prakash on 20/01/25.
 //
 
-import XCTest
-import Combine
 @testable import CoinRanking
+import Combine
+import XCTest
 
 final class CoinListViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable>!

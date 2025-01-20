@@ -5,8 +5,8 @@
 //  Created by Amol Prakash on 20/01/25.
 //
 
-import XCTest
 import CoreData
+import XCTest
 
 @testable import CoinRanking
 

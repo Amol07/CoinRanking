@@ -5,8 +5,8 @@
 //  Created by Amol Prakash on 21/01/25.
 //
 
-import XCTest
 @testable import CoinRanking
+import XCTest
 
 class CoinPriceHistoryProcessorTests: XCTestCase {
 
@@ -25,10 +25,10 @@ class CoinPriceHistoryProcessorTests: XCTestCase {
 			XCTFail("Expected decoding error but got success")
 		} catch let error as AppError {
 			switch error {
-				case let .networkError(networkError):
-					XCTAssertNotNil(networkError)
-				default:
-					XCTFail("Unexpected error type: \(error)")
+			case let .networkError(networkError):
+				XCTAssertNotNil(networkError)
+			default:
+				XCTFail("Unexpected error type: \(error)")
 			}
 		} catch {
 			XCTFail("Unexpected error type: \(error)")

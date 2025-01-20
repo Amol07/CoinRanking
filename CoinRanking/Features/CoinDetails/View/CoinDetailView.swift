@@ -102,43 +102,60 @@ struct PerformanceChartSection: View {
 				.font(.headline)
 
 			// Segment Picker
-			Picker("Filter", selection: $viewModel.selectedChartFilter) {
-				ForEach(ChartFilter.allCases) { filter in
-					Text(filter.rawValue).tag(filter)
-				}
-			}
-			.pickerStyle(.segmented)
-			.onChange(of: viewModel.selectedChartFilter) { _, newValue in
-				Task {
-					await viewModel.fetchPriceHistory(timePeriod: newValue.rawValue)
-				}
-			}
+			segmentPicker
 
-			Chart {
-				ForEach(viewModel.history ?? []) { data in
-					LineMark(
-						x: .value("Time", data.formattedDate),
-						y: .value("Price", (Double(data.price ?? "0") ?? 0.0) / 1000)
-					)
-				}
-			}
-			.chartXAxis {
-				AxisMarks(position: .bottom) {
-					AxisValueLabel(format: .dateTime)
-				}
-			}
-			.chartYAxis {
-				AxisMarks(position: .leading) { value in
-					AxisValueLabel {
-						if let doubleValue = value.as(Double.self) {
-							Text("\(String(format: "$ %.1fK", doubleValue))") // Custom formatting
-						}
-					}
-					AxisGridLine()
-				}
-			}
-			.frame(height: 300)
+			// Chart
+			performanceChart
+				.frame(height: 300)
 		}
+	}
+
+	private var segmentPicker: some View {
+		Picker("Filter", selection: $viewModel.selectedChartFilter) {
+			ForEach(ChartFilter.allCases) { filter in
+				Text(filter.rawValue).tag(filter)
+			}
+		}
+		.pickerStyle(.segmented)
+		.onChange(of: viewModel.selectedChartFilter) { _, newValue in
+			Task {
+				await viewModel.fetchPriceHistory(timePeriod: newValue.rawValue)
+			}
+		}
+	}
+
+	private var performanceChart: some View {
+		Chart {
+			ForEach(viewModel.history ?? []) { data in
+				LineMark(
+					x: .value("Time", data.formattedDate),
+					y: .value("Price", normalizedPrice(from: data.price))
+				)
+			}
+		}
+		.chartXAxis {
+			AxisMarks(position: .bottom) {
+				AxisValueLabel(format: .dateTime)
+			}
+		}
+		.chartYAxis {
+			AxisMarks(position: .leading) { value in
+				AxisValueLabel {
+					if let doubleValue = value.as(Double.self) {
+						Text(formatPrice(doubleValue)) // Custom formatting
+					}
+				}
+				AxisGridLine()
+			}
+		}
+	}
+
+	private func normalizedPrice(from price: String?) -> Double {
+		(Double(price ?? "0") ?? 0.0) / 1000
+	}
+
+	private func formatPrice(_ value: Double) -> String {
+		String(format: "$ %.1fK", value)
 	}
 }
 

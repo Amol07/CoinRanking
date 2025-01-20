@@ -33,6 +33,7 @@ class CoinListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Top 100 Coins"
+        FavoriteCoinHandler.shared.updateFavoriteCoins()
         self.setupNavigationBar()
         self.setupTableView()
         self.setupLoader()

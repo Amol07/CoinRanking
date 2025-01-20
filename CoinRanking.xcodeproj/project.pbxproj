@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		46534C352D3E0B2C00812A70 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46534C342D3E0B2C00812A70 /* CoreData.framework */; };
 		E0D85FF22D3D39230037E744 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = E0D85FF12D3D39230037E744 /* SDWebImageSwiftUI */; };
 /* End PBXBuildFile section */
 
@@ -21,6 +22,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		46534C342D3E0B2C00812A70 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		E0D85EED2D3C44150037E744 /* CoinRanking.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoinRanking.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0D85F032D3C44170037E744 /* CoinRankingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoinRankingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -57,6 +59,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0D85FF22D3D39230037E744 /* SDWebImageSwiftUI in Frameworks */,
+				46534C352D3E0B2C00812A70 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,11 +73,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		46534C332D3E0B2C00812A70 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				46534C342D3E0B2C00812A70 /* CoreData.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E0D85EE42D3C44150037E744 = {
 			isa = PBXGroup;
 			children = (
 				E0D85EEF2D3C44150037E744 /* CoinRanking */,
 				E0D85F062D3C44170037E744 /* CoinRankingTests */,
+				46534C332D3E0B2C00812A70 /* Frameworks */,
 				E0D85EEE2D3C44150037E744 /* Products */,
 			);
 			sourceTree = "<group>";

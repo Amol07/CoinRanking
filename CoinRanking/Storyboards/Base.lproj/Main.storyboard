@@ -24,10 +24,10 @@
             </objects>
             <point key="canvasLocation" x="2753.4351145038167" y="4.9295774647887329"/>
         </scene>
-        <!--View Controller-->
+        <!--Favorite Coins View Controller-->
         <scene sceneID="b1O-NX-QRk">
             <objects>
-                <viewController id="VtK-32-h2y" sceneMemberID="viewController">
+                <viewController id="VtK-32-h2y" customClass="FavoriteCoinsViewController" customModule="CoinRanking" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fjN-sc-862">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

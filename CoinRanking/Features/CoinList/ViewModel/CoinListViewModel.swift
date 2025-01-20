@@ -10,14 +10,13 @@ import Foundation
 
 class CoinListViewModel {
 
+    // MARK: - Private properties
     private var currentPageOffset: Int = 0
     private var subscribers: Set<AnyCancellable> = []
     private let service: CoinListServiceProvider
-    var timePeriod: TimePeriod = .oneDay
+    private var timePeriod: TimePeriod = .oneDay
 
     let filterViewModel = FilterViewModel()
-
-    private var favoriteIndices: Set<Int> = []
 
     @Published private(set) var isFetching: Bool = false
     @Published private(set) var coins: [Coin] = []
@@ -76,15 +75,12 @@ class CoinListViewModel {
     var limit: Int { 20 }
 
     func toggleFavorite(at index: Int) {
-            if favoriteIndices.contains(index) {
-                favoriteIndices.remove(index)
-            } else {
-                favoriteIndices.insert(index)
-            }
-            print("Favorite coins: \(favoriteIndices)")
-        }
+        let coin = coins[index]
+        FavoriteCoinHandler.shared.toggleFavoriteCoin(coin)
+    }
 
     func isFavourite(_ index: Int) -> Bool {
-        favoriteIndices.contains(index)
+        let coin = coins[index]
+        return FavoriteCoinHandler.shared.favoriteCoins.contains { $0.uuid == coin.uuid }
     }
 }

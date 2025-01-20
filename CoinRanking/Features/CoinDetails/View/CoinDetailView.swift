@@ -21,24 +21,24 @@ struct CoinDetailView: View {
         ScrollView {
             VStack(spacing: 20) {
 				switch viewModel.state {
-					case .loading:
-						ProgressView("Loading...")
-					case let .loaded(coin):
-						HeaderSection(coin: coin)
-						StatisticsSection(coin: coin)
-						AboutSection(coin: coin)
-						SupplySection(coin: coin)
-						if let _ = viewModel.history {
-							PerformanceChartSection(viewModel: viewModel)
-						}
-					case .empty:
-						Text("No Results Found!!!")
-							.foregroundColor(.gray)
-							.padding()
-					case .error:
-						Text("Something went wrong. Please try again later!!!")
-							.foregroundColor(.red)
-							.padding()
+				case .loading:
+					ProgressView("Loading...")
+				case let .loaded(coin):
+					HeaderSection(coin: coin)
+					StatisticsSection(coin: coin)
+					AboutSection(coin: coin)
+					SupplySection(coin: coin)
+					if viewModel.history != nil {
+						PerformanceChartSection(viewModel: viewModel)
+					}
+				case .empty:
+					Text("No Results Found!!!")
+						.foregroundColor(.gray)
+						.padding()
+				case .error:
+					Text("Something went wrong. Please try again later!!!")
+						.foregroundColor(.red)
+						.padding()
 				}
             }
             .padding(16)
@@ -108,7 +108,7 @@ struct PerformanceChartSection: View {
 				}
 			}
 			.pickerStyle(.segmented)
-			.onChange(of: viewModel.selectedChartFilter) { oldValue, newValue in
+			.onChange(of: viewModel.selectedChartFilter) { _, newValue in
 				Task {
 					await viewModel.fetchPriceHistory(timePeriod: newValue.rawValue)
 				}
@@ -123,7 +123,7 @@ struct PerformanceChartSection: View {
 				}
 			}
 			.chartXAxis {
-				AxisMarks(position: .bottom) { value in
+				AxisMarks(position: .bottom) {
 					AxisValueLabel(format: .dateTime)
 				}
 			}
@@ -231,4 +231,3 @@ struct SupplySection: View {
 #Preview {
 	CoinDetailView(coinID: "Qwsogvtv82FCd")
 }
-

@@ -6,8 +6,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 extension CoinEntity {
 
@@ -20,7 +20,6 @@ extension CoinEntity {
     @NSManaged public var symbol: String
     @NSManaged public var name: String
     @NSManaged public var iconURL: String
-
 }
 
-extension CoinEntity : Identifiable {}
+extension CoinEntity: Identifiable {}

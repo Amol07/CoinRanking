@@ -67,22 +67,22 @@ extension CoinRequest: RequestProvider {
 	var queryParams: [String: String]? {
 		switch self {
 		case let .coinList(offset, limit, timePeriod, orderBy, orderDirection):
-            var params: [String: String] = [
+			var params: [String: String] = [
 				"offset": "\(offset)",
 				"limit": "\(limit)",
 				"timePeriod": timePeriod
 			]
-            if let orderBy {
-                params["orderBy"] = orderBy
-            }
-            if let orderDirection {
-                params["orderDirection"] = orderDirection
-            }
-            return params
+			if let orderBy {
+				params["orderBy"] = orderBy
+			}
+			if let orderDirection {
+				params["orderDirection"] = orderDirection
+			}
+			return params
 
 		case let .coinDetails(_, timePeriod), let .coinPriceHistory(_, timePeriod):
 			return [
-				"timePeriod": timePeriod,
+				"timePeriod": timePeriod
 			]
 		}
 	}

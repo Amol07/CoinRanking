@@ -22,14 +22,14 @@ class CoinDetailViewModel: ObservableObject {
 
 		/// Compares two `ViewState` values for equality.
 		/// Determines whether the view state has changed.
-		static func ==(lhs: ViewState, rhs: ViewState) -> Bool {
+		static func == (lhs: ViewState, rhs: ViewState) -> Bool {
 			switch (lhs, rhs) {
-				case (.loading, .loading), (.empty, .empty), (.error, .error):
-					return true
-				case (.loaded(let lhsCoins), .loaded(let rhsCoins)):
-					return lhsCoins.uuid == rhsCoins.uuid
-				default:
-					return false
+			case (.loading, .loading), (.empty, .empty), (.error, .error):
+				return true
+			case (.loaded(let lhsCoins), .loaded(let rhsCoins)):
+				return lhsCoins.uuid == rhsCoins.uuid
+			default:
+				return false
 			}
 		}
 	}
@@ -66,8 +66,10 @@ class CoinDetailViewModel: ObservableObject {
 	/// - Parameter timePeriod: The time period for which the coin details are requested (e.g., "24h", "7d").
 	/// - Parameter service: The service responsible for fetching the coin details (defaults to `CoinDetailService`).
 	@MainActor
-	func fetchCoinDetails(timePeriod: String,
-						  service: CoinDetailServiceProvider = CoinDetailService()) async {
+	func fetchCoinDetails(
+		timePeriod: String,
+		service: CoinDetailServiceProvider = CoinDetailService()
+	) async {
 		state = .loading
 		do {
 			let request = CoinRequest.coinDetails(uuid: coinID, timePeriod: timePeriod)
@@ -93,8 +95,10 @@ class CoinDetailViewModel: ObservableObject {
 	/// - Parameter timePeriod: The time period for which the price history is requested (e.g., "24h", "1y").
 	/// - Parameter service: The service responsible for fetching the price history (defaults to `CoinPriceHistoryService`).
 	@MainActor
-	func fetchPriceHistory(timePeriod: String,
-						   service: CoinPriceHistoryServiceProvider = CoinPriceHistoryService()) async {
+	func fetchPriceHistory(
+		timePeriod: String,
+		service: CoinPriceHistoryServiceProvider = CoinPriceHistoryService()
+	) async {
 		do {
 			let request = CoinRequest.coinPriceHistory(uuid: coinID, timePeriod: timePeriod)
 			let response = try await service.fetchCoinPriceHistory(request: request)
@@ -110,7 +114,7 @@ class CoinDetailViewModel: ObservableObject {
 	///
 	/// - Returns: The filtered history data or an empty array if the state is not `.loaded` or the history is nil.
 	func getFilteredChartData() -> [History] {
-		guard case .loaded(_) = state, let history = history else { return [] }
+		guard case .loaded = state, let history = history else { return [] }
 		return history
 	}
 }

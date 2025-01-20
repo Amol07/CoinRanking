@@ -27,11 +27,14 @@ enum LargeNumberUnit: Double {
 	/// - Returns: A string representing the suffix for the unit.
 	var suffix: String {
 		switch self {
-			case .trillion: return "T"
-			case .billion: return "B"
-			case .million: return "M"
-			case .none: return ""
+		case .trillion:
+			return "T"
+		case .billion:
+			return "B"
+		case .million:
+			return "M"
+		case .none:
+			return ""
 		}
 	}
 }
-

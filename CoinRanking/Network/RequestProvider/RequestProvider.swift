@@ -5,7 +5,6 @@
 //  Created by Amol Prakash on 19/01/25.
 //
 
-
 import Foundation
 
 /// A protocol that defines the structure and requirements for an HTTP request.

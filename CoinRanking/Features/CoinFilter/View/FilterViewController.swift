@@ -70,7 +70,7 @@ class FilterViewController: UIViewController {
         orderLabel.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(orderLabel)
 
-        let orderSegmentedControl = UISegmentedControl(items: self.viewModel.orderOptions.map{ $0.textValue })
+        let orderSegmentedControl = UISegmentedControl(items: self.viewModel.orderOptions.map { $0.textValue })
         orderSegmentedControl.addTarget(self, action: #selector(orderChanged(_:)), for: .valueChanged)
         orderSegmentedControl.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(orderSegmentedControl)

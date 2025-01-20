@@ -35,7 +35,6 @@ struct CoinDetails: Codable {
     let sparkline: [String?]?
     let allTimeHigh: AllTimeHigh?
     let coinrankingURL: String?
-    let lowVolume: Bool?
     let listedAt: Int?
     let notices: [Notice]?
     let contractAddresses, tags: [String]?
@@ -48,7 +47,7 @@ struct CoinDetails: Codable {
         case the24HVolume = "24hVolume"
         case marketCap, fullyDilutedMarketCap, price, btcPrice, priceAt, change, rank, numberOfMarkets, numberOfExchanges, sparkline, allTimeHigh
         case coinrankingURL = "coinrankingUrl"
-        case lowVolume, listedAt, notices, contractAddresses, tags
+        case listedAt, notices, contractAddresses, tags
     }
 }
 
@@ -72,7 +71,6 @@ struct Notice: Codable {
 
 // MARK: - Supply
 struct Supply: Codable {
-    let confirmed: Bool?
     let supplyAt: Int?
     let circulating, total, max: String?
 }

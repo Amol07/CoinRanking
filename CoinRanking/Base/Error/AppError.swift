@@ -34,10 +34,10 @@ enum AppError: Error {
 	/// The localized message is user-friendly and can be displayed in the UI or logged.
 	var localizedDescription: String {
 		switch self {
-			case .networkError(let networkError):
-				return networkError.localizedDescription
-			case .requestError(let requestError):
-				return requestError.localizedDescription
+		case .networkError(let networkError):
+			return networkError.localizedDescription
+		case .requestError(let requestError):
+			return requestError.localizedDescription
 		}
 	}
 
@@ -82,20 +82,20 @@ enum AppError: Error {
 		/// The message is suitable for displaying to users or logging.
 		var localizedDescription: String {
 			switch self {
-				case .noInternet:
-					return NSLocalizedString("No internet connection.", comment: "Error message for no internet connection.")
-				case .timeout:
-					return NSLocalizedString("The request timed out. Please check your connection and try again.", comment: "Error message for request timeout.")
-				case .serverError:
-					return NSLocalizedString("The server encountered an error. Please try again later.", comment: "Error message for server error.")
-				case .unauthorized:
-					return NSLocalizedString("Unauthorized access. Please check your credentials.", comment: "Error message for unauthorized access.")
-				case .decodingError:
-					return NSLocalizedString("Failed to decode response data. Please try again later.", comment: "Error message for decoding failure.")
-				case .invalidResponse:
-					return NSLocalizedString("The server's response was invalid. Please try again.", comment: "Error message for invalid response from the server.")
-				case .unknownError:
-					return NSLocalizedString("An unknown error occurred. Please try again.", comment: "Error message for an unknown error.")
+			case .noInternet:
+				return NSLocalizedString("No internet connection.", comment: "Error message for no internet connection.")
+			case .timeout:
+				return NSLocalizedString("The request timed out. Please check your connection and try again.", comment: "Error message for request timeout.")
+			case .serverError:
+				return NSLocalizedString("The server encountered an error. Please try again later.", comment: "Error message for server error.")
+			case .unauthorized:
+				return NSLocalizedString("Unauthorized access. Please check your credentials.", comment: "Error message for unauthorized access.")
+			case .decodingError:
+				return NSLocalizedString("Failed to decode response data. Please try again later.", comment: "Error message for decoding failure.")
+			case .invalidResponse:
+				return NSLocalizedString("The server's response was invalid. Please try again.", comment: "Error message for invalid response from the server.")
+			case .unknownError:
+				return NSLocalizedString("An unknown error occurred. Please try again.", comment: "Error message for an unknown error.")
 			}
 		}
 	}
@@ -121,56 +121,56 @@ enum AppError: Error {
 		/// The message is suitable for displaying to users or logging.
 		var localizedDescription: String {
 			switch self {
-				case .invalidURL(let urlString):
-					return NSLocalizedString("The URL is invalid: \(urlString). Please check the URL and try again.", comment: "Error message for invalid URL")
-				case .invalidBody(let body):
-					return NSLocalizedString("The body of the request is invalid: \(body). Please check the body and try again.", comment: "Error message for invalid body")
+			case .invalidURL(let urlString):
+				return NSLocalizedString("The URL is invalid: \(urlString). Please check the URL and try again.", comment: "Error message for invalid URL")
+			case .invalidBody(let body):
+				return NSLocalizedString("The body of the request is invalid: \(body). Please check the body and try again.", comment: "Error message for invalid body")
 			}
 		}
 	}
 }
 
 extension AppError: Equatable {
-	static func ==(lhs: AppError, rhs: AppError) -> Bool {
+	static func == (lhs: AppError, rhs: AppError) -> Bool {
 		switch (lhs, rhs) {
-			case (.networkError(let leftNetworkError), .networkError(let rightNetworkError)):
-				return leftNetworkError == rightNetworkError
-			case (.requestError(let leftRequestError), .requestError(let rightRequestError)):
-				return leftRequestError == rightRequestError
-			default:
-				return false
+		case (.networkError(let leftNetworkError), .networkError(let rightNetworkError)):
+			return leftNetworkError == rightNetworkError
+		case (.requestError(let leftRequestError), .requestError(let rightRequestError)):
+			return leftRequestError == rightRequestError
+		default:
+			return false
 		}
 	}
 }
 
 extension AppError.NetworkError: Equatable {
-	static func ==(lhs: AppError.NetworkError, rhs: AppError.NetworkError) -> Bool {
+	static func == (lhs: AppError.NetworkError, rhs: AppError.NetworkError) -> Bool {
 		switch (lhs, rhs) {
-			case (.noInternet, .noInternet),
-				(.timeout, .timeout),
-				(.unauthorized, .unauthorized),
-				(.invalidResponse, .invalidResponse),
-				(.unknownError, .unknownError):
-				return true
-			case (.serverError(let status1), .serverError(let status2)):
-						return status1 == status2
-			case (.decodingError(let leftError), .decodingError(let rightError)):
-				return String(describing: leftError) == String(describing: rightError)
-			default:
-				return false
+		case (.noInternet, .noInternet),
+			(.timeout, .timeout),
+			(.unauthorized, .unauthorized),
+			(.invalidResponse, .invalidResponse),
+			(.unknownError, .unknownError):
+			return true
+		case (.serverError(let status1), .serverError(let status2)):
+			return status1 == status2
+		case (.decodingError(let leftError), .decodingError(let rightError)):
+			return String(describing: leftError) == String(describing: rightError)
+		default:
+			return false
 		}
 	}
 }
 
 extension AppError.RequestError: Equatable {
-	static func ==(lhs: AppError.RequestError, rhs: AppError.RequestError) -> Bool {
+	static func == (lhs: AppError.RequestError, rhs: AppError.RequestError) -> Bool {
 		switch (lhs, rhs) {
-			case (.invalidURL(let leftURL), .invalidURL(let rightURL)):
-				return leftURL == rightURL
-			case (.invalidBody(let leftBody), .invalidBody(let rightBody)):
-				return leftBody == rightBody
-			default:
-				return false
+		case (.invalidURL(let leftURL), .invalidURL(let rightURL)):
+			return leftURL == rightURL
+		case (.invalidBody(let leftBody), .invalidBody(let rightBody)):
+			return leftBody == rightBody
+		default:
+			return false
 		}
 	}
 }

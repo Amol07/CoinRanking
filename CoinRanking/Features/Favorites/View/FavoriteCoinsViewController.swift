@@ -11,7 +11,7 @@ import UIKit
 
 class FavoriteCoinsViewController: UIViewController {
 
-    private let viewModel: FavoriteCoinsViewModel = FavoriteCoinsViewModel()
+    private let viewModel = FavoriteCoinsViewModel()
     private var subscribers: Set<AnyCancellable> = []
 
     private lazy var tableView: UITableView = {

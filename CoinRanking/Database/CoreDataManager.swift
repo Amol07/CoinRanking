@@ -105,7 +105,7 @@ extension CoreDataManager: CoreDataFavoriteCoinProvider {
             return []
         }
     }
-    
+
     func saveFavoriteCoin(_ coin: Coin) {
         let favoriteCoin = CoinEntity(context: context)
         favoriteCoin.iconURL = coin.iconURL
@@ -115,7 +115,7 @@ extension CoreDataManager: CoreDataFavoriteCoinProvider {
 
         saveContext()
     }
-    
+
     func removeFavoriteCoin(withUUID id: String) -> Bool {
         let fetchRequest: NSFetchRequest<CoinEntity> = CoinEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "uuid == %@", id)
@@ -125,6 +125,4 @@ extension CoreDataManager: CoreDataFavoriteCoinProvider {
         saveContext()
         return true
     }
-    
-
 }

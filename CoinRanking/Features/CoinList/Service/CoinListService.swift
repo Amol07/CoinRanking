@@ -56,8 +56,10 @@ class CoinListService: CoinListServiceProvider {
 	/// - Parameters:
 	///   - networkManager: A `NetworkProvider` that fetches raw data from the network. Defaults to a new instance of `NetworkManager`.
 	///   - processor: A `CoinListProcessor` used to process the raw data into a `CoinListResponse` model. Defaults to a new instance of `CoinListProcessor`.
-	init(networkManager: NetworkProvider = NetworkManager(),
-		 processor: CoinListProcessor = CoinListProcessor()) {
+	init(
+		networkManager: NetworkProvider = NetworkManager(),
+		processor: CoinListProcessor = CoinListProcessor()
+	) {
 		self.networkManager = networkManager
 		self.processor = processor
 	}

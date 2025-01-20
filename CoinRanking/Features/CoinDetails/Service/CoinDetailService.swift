@@ -35,8 +35,10 @@ class CoinDetailService: CoinDetailServiceProvider {
 	/// - Parameters:
 	///   - networkManager: A `NetworkProvider` responsible for fetching raw data.
 	///   - processor: A `CoinDetailProcessor` for processing the raw data into `CoinDetailResponse` (defaults to a new instance).
-	init(networkManager: NetworkProvider = NetworkManager(),
-		 processor: CoinDetailProcessor = CoinDetailProcessor()) {
+	init(
+		networkManager: NetworkProvider = NetworkManager(),
+		processor: CoinDetailProcessor = CoinDetailProcessor()
+	) {
 		self.networkManager = networkManager
 		self.processor = processor
 	}

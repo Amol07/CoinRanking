@@ -46,8 +46,10 @@ class CoinPriceHistoryService: CoinPriceHistoryServiceProvider {
 	/// - Parameters:
 	///   - networkManager: The `NetworkProvider` for fetching data (default is `NetworkManager()`).
 	///   - processor: The `CoinPriceHistoryProcessor` for processing data (default is a new instance of `CoinPriceHistoryProcessor`).
-	init(networkManager: NetworkProvider = NetworkManager(),
-		 processor: CoinPriceHistoryProcessor = CoinPriceHistoryProcessor()) {
+	init(
+		networkManager: NetworkProvider = NetworkManager(),
+		processor: CoinPriceHistoryProcessor = CoinPriceHistoryProcessor()
+	) {
 		self.networkManager = networkManager
 		self.processor = processor
 	}

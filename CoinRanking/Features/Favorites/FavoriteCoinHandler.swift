@@ -5,7 +5,6 @@
 //  Created by Amol Prakash on 20/01/25.
 //
 
-
 /// A database provider for managing favorite coins.
 struct FavoriteCoinDBProvider {
 
@@ -44,7 +43,7 @@ final class FavoriteCoinHandler: FavoriteCoinProvider {
     static let shared = FavoriteCoinHandler()
 
     /// A provider for database operations related to favorite coins.
-    var dbProvider: FavoriteCoinDBProvider = FavoriteCoinDBProvider()
+    var dbProvider = FavoriteCoinDBProvider()
 
     /// Private initializer to enforce singleton usage.
     private init() {}

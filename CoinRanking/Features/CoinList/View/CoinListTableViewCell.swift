@@ -5,8 +5,8 @@
 //  Created by Amol Prakash on 19/01/25.
 //
 
-import UIKit
 import SDWebImage
+import UIKit
 
 /// A UITableViewCell subclass that displays information about a cryptocurrency.
 /// This cell includes a thumbnail image, the coin's name, symbol, price, and percentage change.

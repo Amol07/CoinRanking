@@ -10,10 +10,10 @@ import SwiftUI
 import UIKit
 
 class FavoriteCoinsViewController: UIViewController {
-    
+
     private let viewModel: FavoriteCoinsViewModel = FavoriteCoinsViewModel()
     private var subscribers: Set<AnyCancellable> = []
-    
+
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -23,23 +23,24 @@ class FavoriteCoinsViewController: UIViewController {
         tableView.backgroundColor = .clear
         return tableView
     }()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Favorite Coins"
         self.setupTableView()
         self.bindViewModel()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         debugPrint("View will appear is called in FavoriteCoinsViewController")
         self.viewModel.loadFavoriteCoins()
     }
-    
+
+    /// Sets up the table view and adds it to the view hierarchy with constraints.
     func setupTableView() {
         view.addSubview(self.tableView)
-        
+
         NSLayoutConstraint.activate([
             self.tableView.topAnchor.constraint(equalTo: view.topAnchor),
             self.tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -47,7 +48,9 @@ class FavoriteCoinsViewController: UIViewController {
             self.tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
-    
+
+    /// Binds the view model's `favoriteCoins` property to the table view.
+    /// Reloads the table view whenever the `favoriteCoins` array changes.
     func bindViewModel() {
         viewModel.$favoriteCoins
             .receive(on: DispatchQueue.main)
@@ -59,10 +62,11 @@ class FavoriteCoinsViewController: UIViewController {
 }
 
 extension FavoriteCoinsViewController: UITableViewDataSource {
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.viewModel.favoriteCoins.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: FavoriteCoinsTableViewCell.identifier, for: indexPath) as? FavoriteCoinsTableViewCell else {
             return UITableViewCell()
@@ -74,6 +78,7 @@ extension FavoriteCoinsViewController: UITableViewDataSource {
 }
 
 extension FavoriteCoinsViewController: UITableViewDelegate {
+
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let imageName = "star.fill"
         let favoriteAction = UIContextualAction(style: .normal, title: nil) { _, _, completionHandler in
@@ -82,7 +87,7 @@ extension FavoriteCoinsViewController: UITableViewDelegate {
         }
         favoriteAction.backgroundColor = .systemBlue
         favoriteAction.image = UIImage(systemName: imageName)
-        
+
         let configuration = UISwipeActionsConfiguration(actions: [favoriteAction])
         configuration.performsFirstActionWithFullSwipe = true
         return configuration

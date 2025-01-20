@@ -5,6 +5,8 @@
 //  Created by Abhishek Kumar on 19/01/25.
 //
 
+/// An enumeration representing various time periods.
+/// Each case is associated with a string value that serves as an abbreviation for the time period.
 enum TimePeriod: String {
     case oneHour = "1h"
     case threeHour = "3h"

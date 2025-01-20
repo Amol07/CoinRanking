@@ -7,9 +7,12 @@
 
 import UIKit
 
+/// Custom UITableViewCell subclass to display information about favorite coins.
 class FavoriteCoinsTableViewCell: UITableViewCell {
+    /// Identifier for reusing the cell.
     static let identifier = "FavoriteCoinsTableViewCell"
 
+    /// ImageView to display the thumbnail of the coin.
     private let thumbnailImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -22,6 +25,7 @@ class FavoriteCoinsTableViewCell: UITableViewCell {
         return imageView
     }()
 
+    /// Label to display the coin's name.
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
@@ -31,6 +35,7 @@ class FavoriteCoinsTableViewCell: UITableViewCell {
         return label
     }()
 
+    /// Label to display the coin's symbol.
     private lazy var symbolLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
@@ -38,6 +43,7 @@ class FavoriteCoinsTableViewCell: UITableViewCell {
         return label
     }()
 
+    /// Horizontal stack view to arrange the thumbnail and vertical stack view.
     private let horizontalStackView: UIStackView = {
         let hStackView = UIStackView()
         hStackView.axis = .horizontal
@@ -48,6 +54,7 @@ class FavoriteCoinsTableViewCell: UITableViewCell {
         return hStackView
     }()
 
+    /// Vertical stack view to arrange the name and symbol labels.
     private lazy var verticalStackView: UIStackView = {
         let vStackView = UIStackView()
         vStackView.axis = .vertical
@@ -58,26 +65,36 @@ class FavoriteCoinsTableViewCell: UITableViewCell {
         return vStackView
     }()
 
+    /// Initializes the cell with the given style and reuse identifier.
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupView()
+        setupView() // Configures the view hierarchy and constraints.
     }
 
+    /// Required initializer for using the cell from a storyboard or nib file.
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    /// Configures the cell with the provided coin entity.
+    /// - Parameter coin: A `CoinEntity` containing the coin's details.
     func configure(with coin: CoinEntity) {
         symbolLabel.text = coin.symbol
         nameLabel.text = coin.name
 
+        // Loads the thumbnail image asynchronously.
         Task { @MainActor in
             thumbnailImageView.image = await loadImage(from: coin.iconURL)
         }
     }
 
+    /// Asynchronously loads an image from the provided URL.
+    /// - Parameter urlString: The URL string of the image.
+    /// - Returns: The loaded `UIImage` or a default placeholder image.
     private func loadImage(from urlString: String) async -> UIImage? {
-        guard let url = URL(string: urlString) else { return UIImage(systemName: "dollarsign.circle.fill") }
+        guard let url = URL(string: urlString) else {
+            return UIImage(systemName: "dollarsign.circle.fill")
+        }
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             return UIImage(data: data)
@@ -87,14 +104,18 @@ class FavoriteCoinsTableViewCell: UITableViewCell {
         }
     }
 
+    /// Sets up the view hierarchy and constraints.
     private func setupView() {
-        self.selectionStyle = .none
+        self.selectionStyle = .none // Disables the default selection style.
 
+        // Adds subviews to the horizontal stack view.
         horizontalStackView.addArrangedSubview(self.thumbnailImageView)
         horizontalStackView.addArrangedSubview(self.verticalStackView)
 
+        // Adds the horizontal stack view to the content view.
         contentView.addSubview(horizontalStackView)
 
+        // Activates layout constraints for the horizontal stack view.
         NSLayoutConstraint.activate([
             horizontalStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             horizontalStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),

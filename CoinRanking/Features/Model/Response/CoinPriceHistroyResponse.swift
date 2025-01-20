@@ -2,7 +2,7 @@
 //  CoinPriceHistroyResponse.swift
 //  CoinRanking
 //
-//  Created by Amol Prakash on 20/01/25.
+//  Created by Amol Prakash on 19/01/25.
 //
 
 import Foundation

@@ -6,6 +6,7 @@
 //
 
 import Combine
+import SwiftUI
 import UIKit
 
 class CoinListViewController: UIViewController {
@@ -128,6 +129,13 @@ extension CoinListViewController: UITableViewDelegate {
         let configuration = UISwipeActionsConfiguration(actions: [favoriteAction])
         configuration.performsFirstActionWithFullSwipe = true
         return configuration
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let coin = viewModel.coins[indexPath.row]
+        let coinDetailView = CoinDetailView(coinID: coin.uuid)
+        let hostingController = UIHostingController(rootView: coinDetailView)
+        self.present(hostingController, animated: true)
     }
 }
 

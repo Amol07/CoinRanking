@@ -113,6 +113,14 @@ class FilterViewController: UIViewController {
         return containerView
     }()
 
+    // Tap gesture to dismiss filter screen
+    private lazy var dismissTapGesture: UITapGestureRecognizer = {
+        let dismissTapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissDrawer))
+        dismissTapGesture.cancelsTouchesInView = false
+        dismissTapGesture.delegate = self
+        return dismissTapGesture
+    }()
+
     // MARK: - Initialiser
     init(viewModel: FilterViewModel) {
         self.viewModel = viewModel
@@ -134,8 +142,9 @@ class FilterViewController: UIViewController {
 
     // MARK: - Private methods
     private func setupDrawerView() {
-        view.addSubview(containerView)
+        self.view.addGestureRecognizer(self.dismissTapGesture)
 
+        view.addSubview(containerView)
         NSLayoutConstraint.activate([
             containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -166,4 +175,20 @@ class FilterViewController: UIViewController {
         self.viewModel.reset()
         dismiss(animated: true, completion: nil)
     }
+
+    @objc
+    private func dismissDrawer() {
+        dismiss(animated: true, completion: nil)
+    }
+}
+
+extension FilterViewController: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+            // Check if the touch is inside the containerView
+            if containerView.frame.contains(touch.location(in: view)) {
+                return false // Ignore the gesture
+            }
+            return true // Allow the gesture
+        }
 }
